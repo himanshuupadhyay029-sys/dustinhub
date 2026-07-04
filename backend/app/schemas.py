@@ -34,12 +34,12 @@ class TokenData(BaseModel):
 # Movie Schemas
 class MovieBase(BaseModel):
     title: str = Field(..., min_length=1)
-    genre: str = Field(..., min_length=1)
-    year: int = Field(..., ge=1880, le=2100)
+    genre: str = Field(default="Movie")
+    year: int = Field(default=2026, ge=1880, le=2100)
     language: str = Field(..., min_length=1)
-    synopsis: str = Field(..., min_length=1)
-    cast: str = Field(..., description="Comma-separated list of actors")
-    rating: float = Field(..., ge=0.0, le=10.0)
+    synopsis: str = Field(default="No description available.")
+    cast: str = Field(default="N/A")
+    rating: float = Field(default=7.0, ge=0.0, le=10.0)
     poster_url: str
     download_link: str
     is_visible: bool = True

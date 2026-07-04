@@ -102,19 +102,11 @@ const Home = () => {
               <span className="px-2 py-0.5 rounded bg-netflix-red text-white text-xs font-black uppercase tracking-widest">
                 Featured
               </span>
-              <div className="flex items-center text-yellow-500 font-bold text-sm space-x-1">
-                <Star className="w-4 h-4 fill-yellow-500" />
-                <span>{heroMovie.rating.toFixed(1)} Rating</span>
-              </div>
             </div>
 
-            <h1 className="text-4xl md:text-6xl font-black tracking-tight leading-none">
+            <h1 className="text-4xl md:text-6xl font-black tracking-tight leading-none pb-2">
               {heroMovie.title}
             </h1>
-
-            <p className="text-netflix-textGray text-sm md:text-base line-clamp-3 md:line-clamp-4">
-              {heroMovie.synopsis}
-            </p>
 
             <div className="flex items-center space-x-4 pt-2">
               <Link
@@ -179,17 +171,7 @@ const Home = () => {
             /* Netflix Category Browsing rows */
             <div className="space-y-4 md:space-y-8">
               <MovieRow title="Recently Added" movies={recentlyAdded} />
-              
-              {genres.map((genre) => {
-                const genreMovies = movies.filter((m) => m.genre === genre);
-                return (
-                  <MovieRow
-                    key={genre}
-                    title={genre}
-                    movies={genreMovies}
-                  />
-                );
-              })}
+              <MovieRow title="All Movies" movies={movies} />
             </div>
           )}
         </>

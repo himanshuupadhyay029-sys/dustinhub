@@ -105,24 +105,6 @@ const MovieDetail = () => {
               
               {/* Badges row */}
               <div className="flex flex-wrap items-center gap-3 text-sm">
-                {/* Rating */}
-                <div className="flex items-center space-x-1 bg-yellow-500/10 text-yellow-500 font-bold px-3 py-1 rounded-full border border-yellow-500/20">
-                  <Star className="w-4 h-4 fill-yellow-500 text-yellow-500" />
-                  <span>{movie.rating.toFixed(1)}</span>
-                </div>
-
-                {/* Genre */}
-                <div className="flex items-center space-x-1 bg-netflix-red/10 text-netflix-red font-bold px-3 py-1 rounded-full border border-netflix-red/20">
-                  <Tag className="w-3.5 h-3.5" />
-                  <span>{movie.genre}</span>
-                </div>
-
-                {/* Year */}
-                <div className="flex items-center space-x-1 bg-white/10 text-white font-medium px-3 py-1 rounded-full border border-white/15">
-                  <Calendar className="w-3.5 h-3.5" />
-                  <span>{movie.year}</span>
-                </div>
-
                 {/* Language */}
                 <div className="flex items-center space-x-1 bg-white/10 text-white font-medium px-3 py-1 rounded-full border border-white/15">
                   <Globe className="w-3.5 h-3.5" />
@@ -131,33 +113,6 @@ const MovieDetail = () => {
               </div>
             </div>
 
-            {/* Synopsis */}
-            <div className="space-y-2">
-              <h3 className="text-lg font-bold text-white tracking-wide uppercase border-b border-white/10 pb-1.5">
-                Synopsis
-              </h3>
-              <p className="text-netflix-textGray leading-relaxed text-sm md:text-base">
-                {movie.synopsis}
-              </p>
-            </div>
-
-            {/* Cast list */}
-            <div className="space-y-2">
-              <h3 className="text-lg font-bold text-white tracking-wide uppercase border-b border-white/10 pb-1.5">
-                Cast
-              </h3>
-              <div className="flex items-start space-x-2 text-sm text-netflix-textGray">
-                <User2 className="w-4 h-4 text-netflix-red mt-0.5 flex-shrink-0" />
-                <span className="leading-relaxed">
-                  {movie.cast.split(',').map((actor, idx) => (
-                    <span key={idx}>
-                      {idx > 0 && <span className="text-white/20"> • </span>}
-                      <span className="hover:text-white transition duration-150 cursor-default">{actor.trim()}</span>
-                    </span>
-                  ))}
-                </span>
-              </div>
-            </div>
 
             {/* Download Link Trigger Button */}
             <div className="pt-4">

@@ -98,12 +98,12 @@ const AdminDashboard = () => {
   const handleOpenAddModal = () => {
     setEditingMovie(null);
     setTitle('');
-    setGenre('');
-    setYear('');
+    setGenre('Movie');
+    setYear('2026');
     setLanguage('');
-    setRating('');
-    setSynopsis('');
-    setCast('');
+    setRating('7.0');
+    setSynopsis('No description available.');
+    setCast('N/A');
     setPosterUrl('');
     setDownloadLink('');
     setIsVisible(true);
@@ -572,34 +572,6 @@ const AdminDashboard = () => {
                   />
                 </div>
 
-                {/* Genre */}
-                <div className="space-y-1">
-                  <label className="text-xs font-black uppercase text-zinc-400">Genre</label>
-                  <input
-                    type="text"
-                    required
-                    value={genre}
-                    onChange={(e) => setGenre(e.target.value)}
-                    placeholder="e.g. Sci-Fi, Action, Drama"
-                    className="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-red-600 focus:border-transparent text-white"
-                  />
-                </div>
-
-                {/* Year */}
-                <div className="space-y-1">
-                  <label className="text-xs font-black uppercase text-zinc-400">Release Year</label>
-                  <input
-                    type="number"
-                    required
-                    min="1880"
-                    max="2100"
-                    value={year}
-                    onChange={(e) => setYear(e.target.value)}
-                    placeholder="e.g. 2010"
-                    className="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-red-600 focus:border-transparent text-white"
-                  />
-                </div>
-
                 {/* Language */}
                 <div className="space-y-1">
                   <label className="text-xs font-black uppercase text-zinc-400">Language</label>
@@ -609,22 +581,6 @@ const AdminDashboard = () => {
                     value={language}
                     onChange={(e) => setLanguage(e.target.value)}
                     placeholder="e.g. English, Korean"
-                    className="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-red-600 focus:border-transparent text-white"
-                  />
-                </div>
-
-                {/* Rating */}
-                <div className="space-y-1">
-                  <label className="text-xs font-black uppercase text-zinc-400">Rating (0.0 to 10.0)</label>
-                  <input
-                    type="number"
-                    required
-                    step="0.1"
-                    min="0"
-                    max="10"
-                    value={rating}
-                    onChange={(e) => setRating(e.target.value)}
-                    placeholder="e.g. 8.8"
                     className="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-red-600 focus:border-transparent text-white"
                   />
                 </div>
@@ -644,18 +600,6 @@ const AdminDashboard = () => {
                 </div>
               </div>
 
-              {/* Cast */}
-              <div className="space-y-1">
-                <label className="text-xs font-black uppercase text-zinc-400">Cast Members (comma-separated)</label>
-                <input
-                  type="text"
-                  required
-                  value={cast}
-                  onChange={(e) => setCast(e.target.value)}
-                  placeholder="Leonardo DiCaprio, Tom Hardy, Cillian Murphy"
-                  className="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-red-600 focus:border-transparent text-white"
-                />
-              </div>
 
               {/* Poster URL */}
               <div className="space-y-1">
@@ -683,18 +627,6 @@ const AdminDashboard = () => {
                 />
               </div>
 
-              {/* Synopsis */}
-              <div className="space-y-1">
-                <label className="text-xs font-black uppercase text-zinc-400">Synopsis / Description</label>
-                <textarea
-                  required
-                  rows="3"
-                  value={synopsis}
-                  onChange={(e) => setSynopsis(e.target.value)}
-                  placeholder="Describe the movie story here..."
-                  className="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-red-600 focus:border-transparent text-white resize-none"
-                />
-              </div>
 
               {/* Submit Buttons */}
               <div className="flex justify-end space-x-3 pt-4 border-t border-zinc-900">
