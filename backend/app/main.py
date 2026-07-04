@@ -55,7 +55,26 @@ def health_check():
     """
     return {"status": "healthy", "service": "Movie Catalog API"}
 
-# Auto-create tables (Alembic is preferred, but this ensures a smooth local setup)
+# Programmatically run Alembic migrations on startup to keep tables up-to-date
+try:
+    from alembic.config import Config
+    from alembic import command
+    
+    # Locate alembic.ini relative to this file
+    base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    ini_path = os.path.join(base_dir, "alembic.ini")
+    
+    # Set the configuration path
+    alembic_cfg = Config(ini_path)
+    # Ensure alembic script directory is found correctly
+    alembic_cfg.set_main_option("script_location", os.path.join(base_dir, "alembic"))
+    
+    command.upgrade(alembic_cfg, "head")
+    print("Alembic database migrations applied successfully.")
+except Exception as e:
+    print(f"Alembic migration failed to run on startup: {e}")
+
+# Fallback auto-creation
 try:
     Base.metadata.create_all(bind=engine)
 except Exception as e:
