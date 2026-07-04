@@ -116,12 +116,12 @@ const AdminDashboard = () => {
     setEditingMovie(movie);
     setTitle(movie.title);
     setType(movie.type || 'movie');
-    setGenre(movie.genre);
-    setYear(movie.year.toString());
+    setGenre(movie.genre || '');
+    setYear((movie.year ?? 2026).toString());
     setLanguage(movie.language);
-    setRating(movie.rating.toString());
-    setSynopsis(movie.synopsis);
-    setCast(movie.cast);
+    setRating((movie.rating ?? 7.0).toString());
+    setSynopsis(movie.synopsis || 'No description available.');
+    setCast(movie.cast || 'N/A');
     setPosterUrl(movie.poster_url);
     setDownloadLink(movie.download_link);
     setIsVisible(movie.is_visible);
