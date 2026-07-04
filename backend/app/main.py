@@ -59,6 +59,7 @@ def health_check():
 try:
     from alembic.config import Config
     from alembic import command
+    from sqlalchemy import inspect
     
     # Locate alembic.ini relative to this file
     base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -69,6 +70,13 @@ try:
     # Ensure alembic script directory is found correctly
     alembic_cfg.set_main_option("script_location", os.path.join(base_dir, "alembic"))
     
+    # Check if database already has tables created via create_all
+    inspector = inspect(engine)
+    tables = inspector.get_table_names()
+    if "movies" in tables and "alembic_version" not in tables:
+        print("Existing database tables found without Alembic tracking. Stamping database to initial schema revision...")
+        command.stamp(alembic_cfg, "1a2b3c4d5e6f")
+        
     command.upgrade(alembic_cfg, "head")
     print("Alembic database migrations applied successfully.")
 except Exception as e:
