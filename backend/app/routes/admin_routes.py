@@ -175,3 +175,25 @@ def delete_user_account(
     db.delete(db_user)
     db.commit()
     return None
+
+@router.put("/users/{user_id}/tier", response_model=UserResponse)
+def update_user_tier(
+    user_id: int,
+    tier: str = Query(..., description="The tier to assign, e.g. Free, Standard, Premium, Ultra HD"),
+    db: Session = Depends(get_db),
+    current_admin: User = Depends(get_current_admin)
+):
+    """
+    Update a user account's assigned streaming tier.
+    Only accessible by administrators.
+    """
+    db_user = db.query(User).filter(User.id == user_id).first()
+    if not db_user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="User account not found."
+        )
+    db_user.tier = tier
+    db.commit()
+    db.refresh(db_user)
+    return db_user

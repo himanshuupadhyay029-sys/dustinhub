@@ -88,6 +88,17 @@ const AdminDashboard = () => {
     }
   };
 
+  const handleUpdateUserTier = async (userId, newTier) => {
+    try {
+      await client.put(`/api/admin/users/${userId}/tier?tier=${newTier}`);
+      toast.success(`User tier updated to ${newTier}`);
+      setUsers(users.map(u => u.id === userId ? { ...u, tier: newTier } : u));
+    } catch (err) {
+      console.error(err);
+      toast.error(err.response?.data?.detail || 'Failed to update user tier');
+    }
+  };
+
   useEffect(() => {
     if (activeTab === 'movies') {
       fetchMovies();
@@ -494,6 +505,7 @@ const AdminDashboard = () => {
                         <th className="py-4 px-6">Email Address</th>
                         <th className="py-4 px-6 text-center">Role</th>
                         <th className="py-4 px-6">Joined Date</th>
+                        <th className="py-4 px-6 text-center">Streaming Tier</th>
                         <th className="py-4 px-6 text-right">Actions</th>
                       </tr>
                     </thead>
@@ -524,6 +536,20 @@ const AdminDashboard = () => {
                           {/* Created At */}
                           <td className="py-4 px-6 text-zinc-500">
                             {new Date(u.created_at).toLocaleString()}
+                          </td>
+
+                          {/* Streaming Tier Selection */}
+                          <td className="py-4 px-6 text-center">
+                            <select
+                              value={u.tier || 'Standard'}
+                              onChange={(e) => handleUpdateUserTier(u.id, e.target.value)}
+                              className="bg-zinc-900 border border-zinc-800 rounded-lg px-2 py-1 text-xs text-white focus:outline-none focus:ring-1 focus:ring-cinema-red cursor-pointer"
+                            >
+                              <option value="Free">Free</option>
+                              <option value="Standard">Standard</option>
+                              <option value="Premium">Premium</option>
+                              <option value="Ultra HD">Ultra HD</option>
+                            </select>
                           </td>
 
                           {/* Actions */}

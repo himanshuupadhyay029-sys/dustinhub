@@ -18,6 +18,7 @@ class UserResponse(BaseModel):
     email: EmailStr
     role: UserRole
     created_at: datetime
+    tier: str = "Standard"
 
     class Config:
         from_attributes = True

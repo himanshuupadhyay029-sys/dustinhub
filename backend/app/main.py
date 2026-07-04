@@ -83,9 +83,22 @@ try:
                 ))
             print("Migration applied: Added 'type' column to movies table.")
         else:
-            print("Schema is up-to-date. No migrations needed.")
+            print("Movies Schema is up-to-date. No migrations needed.")
     else:
         print("Movies table will be created by create_all above.")
+
+    if "users" in inspector.get_table_names():
+        user_columns = [col["name"] for col in inspector.get_columns("users")]
+        if "tier" not in user_columns:
+            with engine.begin() as conn:
+                conn.execute(text(
+                    "ALTER TABLE users ADD COLUMN tier VARCHAR NOT NULL DEFAULT 'Standard'"
+                ))
+            print("Migration applied: Added 'tier' column to users table.")
+        else:
+            print("Users Schema is up-to-date. No migrations needed.")
+    else:
+        print("Users table will be created by create_all above.")
         
 except Exception as e:
     print(f"Schema migration error: {e}")

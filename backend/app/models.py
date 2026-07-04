@@ -14,6 +14,7 @@ class User(Base):
     email = Column(String, unique=True, index=True, nullable=False)
     password_hash = Column(String, nullable=False)
     role = Column(Enum(UserRole), default=UserRole.user, nullable=False)
+    tier = Column(String, default="Standard", nullable=False)
     created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
 
 class Movie(Base):

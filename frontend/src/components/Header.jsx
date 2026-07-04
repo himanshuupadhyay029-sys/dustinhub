@@ -16,8 +16,8 @@ const Header = () => {
   return (
     <header className="w-full bg-cinema-black/85 backdrop-blur-md border-b border-white/5 py-3.5 px-6 md:px-12 flex items-center justify-between sticky top-0 z-40">
       {/* Left side Logo/Branding with /logo.png */}
-      <Link to="/" className="flex items-center space-x-3 select-none">
-        <img src="/logo.png" className="w-8.5 h-8.5 rounded-full object-cover border border-white/10 shadow-[0_0_10px_rgba(229,9,20,0.15)]" alt="Logo" />
+      <Link to="/" className="flex items-center space-x-3 select-none flex-shrink-0">
+        <img src="/logo.png" className="w-9 h-9 rounded-full object-cover border border-white/10 shadow-[0_0_10px_rgba(229,9,20,0.15)]" alt="Logo" />
         <span className="text-lg md:text-xl font-black tracking-widest text-white">
           DUSTIN <span className="text-cinema-red" style={{ textShadow: '0 0 10px rgba(229,9,20,0.4)' }}>HUB</span>
         </span>

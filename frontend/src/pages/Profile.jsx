@@ -1,16 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useAuthStore } from '../store/useAuthStore';
-import { User, Shield, Lock, Eye, Calendar, Sparkles } from 'lucide-react';
-import toast from 'react-hot-toast';
+import { User, Shield, Calendar, Sparkles } from 'lucide-react';
 
 const Profile = () => {
   const { user } = useAuthStore((state) => ({ user: state.user }));
   const [watchlistCount, setWatchlistCount] = useState(0);
-
-  // Password fields
-  const [currentPassword, setCurrentPassword] = useState('');
-  const [newPassword, setNewPassword] = useState('');
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -19,26 +13,8 @@ const Profile = () => {
     }
   }, [user]);
 
-  const handlePasswordChange = (e) => {
-    e.preventDefault();
-    if (!currentPassword || !newPassword) {
-      toast.error('Please fill in all fields');
-      return;
-    }
-    if (newPassword.length < 6) {
-      toast.error('New password must be at least 6 characters long');
-      return;
-    }
-    setIsSubmitting(true);
-    setTimeout(() => {
-      setIsSubmitting(false);
-      setCurrentPassword('');
-      setNewPassword('');
-      toast.success('Password updated successfully (Mock Action)');
-    }, 1000);
-  };
-
   const username = user?.email ? user.email.split('@')[0].toUpperCase() : 'MEMBER';
+  const assignedTier = user?.tier || 'Standard';
 
   return (
     <div className="min-h-screen bg-cinema-black text-white p-6 md:p-12">
@@ -46,11 +22,11 @@ const Profile = () => {
         <div>
           <h1 className="text-2xl md:text-4xl font-black tracking-wide uppercase">Your Profile</h1>
           <p className="text-zinc-500 text-xs md:text-sm mt-1 uppercase font-bold tracking-wider">
-            Manage your personal credentials & metrics
+            Examine your account parameters & metrics
           </p>
         </div>
 
-        {/* Profile Card Grid */}
+        {/* Profile Details Layout */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {/* Left panel: Info */}
           <div className="md:col-span-1 bg-zinc-950 border border-white/5 rounded-2xl p-6 flex flex-col items-center text-center space-y-4">
@@ -78,62 +54,30 @@ const Profile = () => {
             </div>
           </div>
 
-          {/* Right panel: Settings Form & Metrics */}
+          {/* Right panel: Metrics */}
           <div className="md:col-span-2 space-y-6">
-            {/* Quick Metrics */}
-            <div className="grid grid-cols-2 gap-4">
-              <div className="bg-zinc-950 border border-white/5 p-6 rounded-2xl flex flex-col">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="bg-zinc-950 border border-white/5 p-6 rounded-2xl flex flex-col justify-center min-h-[140px] shadow-lg">
                 <span className="text-[10px] font-black text-cinema-red uppercase tracking-widest mb-1">Watchlist Items</span>
                 <span className="text-3xl font-black text-white">{watchlistCount}</span>
+                <span className="text-[10px] text-zinc-500 mt-1 uppercase font-bold">Total bookmarked titles</span>
               </div>
-              <div className="bg-zinc-950 border border-white/5 p-6 rounded-2xl flex flex-col">
+
+              <div className="bg-zinc-950 border border-white/5 p-6 rounded-2xl flex flex-col justify-center min-h-[140px] shadow-lg">
                 <span className="text-[10px] font-black text-cinema-red uppercase tracking-widest mb-1">Streaming Tier</span>
-                <span className="text-xl font-black text-white flex items-center gap-1 mt-1">
-                  <Sparkles className="w-4 h-4 text-cinema-red fill-cinema-red/25" />
-                  Premium Ultra HD
+                <span className="text-xl font-black text-white flex items-center gap-1.5 mt-1 uppercase">
+                  <Sparkles className="w-4.5 h-4.5 text-cinema-red fill-cinema-red/25" />
+                  {assignedTier}
                 </span>
+                <span className="text-[10px] text-zinc-500 mt-1 uppercase font-bold">Assigned tier profile</span>
               </div>
             </div>
 
-            {/* Change Password Panel */}
-            <div className="bg-zinc-950 border border-white/5 rounded-2xl p-6 space-y-4">
-              <h2 className="text-lg font-bold text-white tracking-wide uppercase flex items-center gap-2">
-                <Lock className="w-4.5 h-4.5 text-cinema-red" />
-                <span>Update Password</span>
-              </h2>
-
-              <form onSubmit={handlePasswordChange} className="space-y-4">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div className="space-y-1">
-                    <label className="text-[10px] font-black text-zinc-400 uppercase tracking-widest">Current Password</label>
-                    <input
-                      type="password"
-                      value={currentPassword}
-                      onChange={(e) => setCurrentPassword(e.target.value)}
-                      placeholder="••••••••"
-                      className="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-3.5 py-2 text-sm text-white focus:outline-none focus:ring-1 focus:ring-cinema-red focus:border-transparent"
-                    />
-                  </div>
-                  <div className="space-y-1">
-                    <label className="text-[10px] font-black text-zinc-400 uppercase tracking-widest">New Password</label>
-                    <input
-                      type="password"
-                      value={newPassword}
-                      onChange={(e) => setNewPassword(e.target.value)}
-                      placeholder="••••••••"
-                      className="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-3.5 py-2 text-sm text-white focus:outline-none focus:ring-1 focus:ring-cinema-red focus:border-transparent"
-                    />
-                  </div>
-                </div>
-
-                <button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="px-5 py-2.5 rounded-lg bg-cinema-red hover:bg-cinema-red/90 text-white font-black text-xs uppercase tracking-wider transition duration-300 disabled:opacity-50"
-                >
-                  {isSubmitting ? 'Saving changes...' : 'Save Password'}
-                </button>
-              </form>
+            <div className="bg-zinc-950 border border-white/5 rounded-2xl p-6 space-y-3">
+              <h3 className="text-sm font-black text-zinc-300 uppercase tracking-wider">Account Notice</h3>
+              <p className="text-xs text-zinc-500 leading-relaxed font-semibold">
+                This is a private secure portal. If you require level adjustments or streaming tier elevation, please contact the lead system administrator directly.
+              </p>
             </div>
           </div>
         </div>
