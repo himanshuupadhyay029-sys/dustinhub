@@ -11,12 +11,13 @@ router = APIRouter(prefix="/api/movies", tags=["Movies"])
 @router.get("", response_model=List[MovieResponse])
 def get_visible_movies(
     q: Optional[str] = Query(None),
+    type: Optional[str] = Query(None),
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
     """
     Get all movies that are visible (is_visible = True).
-    Allows live filtering by title using the 'q' parameter.
+    Allows live filtering by title using the 'q' parameter and category using 'type'.
     Only accessible by logged-in users.
     """
     query = db.query(Movie).filter(Movie.is_visible == True)
@@ -24,6 +25,9 @@ def get_visible_movies(
     if q:
         # Case-insensitive title search
         query = query.filter(Movie.title.ilike(f"%{q}%"))
+        
+    if type:
+        query = query.filter(Movie.type == type)
         
     return query.order_by(Movie.created_at.desc()).all()
 

@@ -31,6 +31,7 @@ const AdminDashboard = () => {
 
   // Form Fields State
   const [title, setTitle] = useState('');
+  const [type, setType] = useState('movie'); // 'movie' or 'webseries'
   const [genre, setGenre] = useState('');
   const [year, setYear] = useState('');
   const [language, setLanguage] = useState('');
@@ -98,7 +99,8 @@ const AdminDashboard = () => {
   const handleOpenAddModal = () => {
     setEditingMovie(null);
     setTitle('');
-    setGenre('Movie');
+    setType('movie');
+    setGenre('');
     setYear('2026');
     setLanguage('');
     setRating('7.0');
@@ -113,6 +115,7 @@ const AdminDashboard = () => {
   const handleOpenEditModal = (movie) => {
     setEditingMovie(movie);
     setTitle(movie.title);
+    setType(movie.type || 'movie');
     setGenre(movie.genre);
     setYear(movie.year.toString());
     setLanguage(movie.language);
@@ -157,7 +160,7 @@ const AdminDashboard = () => {
     e.preventDefault();
 
     // Basic Validations
-    if (!title || !genre || !year || !language || !rating || !synopsis || !cast || !posterUrl || !downloadLink) {
+    if (!title || !type || !genre || !year || !language || !rating || !synopsis || !cast || !posterUrl || !downloadLink) {
       toast.error('All fields are required');
       return;
     }
@@ -184,6 +187,7 @@ const AdminDashboard = () => {
 
     const payload = {
       title,
+      type,
       genre,
       year: parseInt(year),
       language,
@@ -363,7 +367,12 @@ const AdminDashboard = () => {
                             />
                             <div>
                               <div className="font-bold text-white leading-tight">{movie.title}</div>
-                              <div className="text-xs text-zinc-500 mt-1">{movie.year} | {movie.language}</div>
+                              <div className="text-xs text-zinc-500 mt-1.5 flex items-center space-x-2">
+                                <span className="uppercase text-[9px] font-black tracking-wider text-red-500 border border-red-500/30 rounded px-1 py-0.5 bg-red-500/5">
+                                  {movie.type === 'webseries' ? 'Web Series' : 'Movie'}
+                                </span>
+                                <span>{movie.year} | {movie.language}</span>
+                              </div>
                             </div>
                           </td>
 
@@ -568,6 +577,32 @@ const AdminDashboard = () => {
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
                     placeholder="e.g. Inception"
+                    className="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-red-600 focus:border-transparent text-white"
+                  />
+                </div>
+
+                {/* Type Selection */}
+                <div className="space-y-1">
+                  <label className="text-xs font-black uppercase text-zinc-400">Content Type</label>
+                  <select
+                    value={type}
+                    onChange={(e) => setType(e.target.value)}
+                    className="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-red-600 focus:border-transparent text-white cursor-pointer"
+                  >
+                    <option value="movie">Movie</option>
+                    <option value="webseries">Web Series</option>
+                  </select>
+                </div>
+
+                {/* Genre */}
+                <div className="space-y-1">
+                  <label className="text-xs font-black uppercase text-zinc-400">Genre</label>
+                  <input
+                    type="text"
+                    required
+                    value={genre}
+                    onChange={(e) => setGenre(e.target.value)}
+                    placeholder="e.g. Action, Comedy, Sci-Fi"
                     className="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-red-600 focus:border-transparent text-white"
                   />
                 </div>

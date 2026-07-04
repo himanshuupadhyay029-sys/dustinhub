@@ -21,6 +21,7 @@ class Movie(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     title = Column(String, index=True, nullable=False)
+    type = Column(String, default="movie", nullable=False) # e.g. movie, webseries
     genre = Column(String, nullable=False) # e.g. Action, Drama
     year = Column(Integer, nullable=False)
     language = Column(String, nullable=False)

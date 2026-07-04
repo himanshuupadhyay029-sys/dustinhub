@@ -34,7 +34,8 @@ class TokenData(BaseModel):
 # Movie Schemas
 class MovieBase(BaseModel):
     title: str = Field(..., min_length=1)
-    genre: str = Field(default="Movie")
+    type: str = Field(default="movie", min_length=1)
+    genre: str = Field(..., min_length=1)
     year: int = Field(default=2026, ge=1880, le=2100)
     language: str = Field(..., min_length=1)
     synopsis: str = Field(default="No description available.")
@@ -59,6 +60,7 @@ class MovieCreate(MovieBase):
 
 class MovieUpdate(BaseModel):
     title: Optional[str] = None
+    type: Optional[str] = None
     genre: Optional[str] = None
     year: Optional[int] = None
     language: Optional[str] = None

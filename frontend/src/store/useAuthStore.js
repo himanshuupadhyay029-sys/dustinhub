@@ -8,6 +8,9 @@ export const useAuthStore = create((set) => ({
     ? JSON.parse(localStorage.getItem('user')).role === 'admin' 
     : false,
   
+  searchQuery: '',
+  setSearchQuery: (query) => set({ searchQuery: query }),
+
   login: (token, user) => {
     localStorage.setItem('token', token);
     localStorage.setItem('user', JSON.stringify(user));

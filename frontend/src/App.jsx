@@ -52,6 +52,22 @@ function App() {
           } 
         />
         <Route 
+          path="/movies" 
+          element={
+            <ProtectedRoute>
+              <Home typeFilter="movie" />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/webseries" 
+          element={
+            <ProtectedRoute>
+              <Home typeFilter="webseries" />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
           path="/movies/:id" 
           element={
             <ProtectedRoute>
