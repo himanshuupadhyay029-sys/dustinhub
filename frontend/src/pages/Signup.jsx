@@ -114,7 +114,7 @@ const Signup = () => {
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full py-3.5 px-4 bg-netflix-red hover:bg-red-700 text-white font-bold rounded-xl shadow-lg hover:shadow-netflix-red/35 flex items-center justify-center transition duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full py-3.5 px-4 bg-cinema-cyan hover:bg-cinema-cyan/90 text-black font-black rounded-xl shadow-lg hover:shadow-cinema-cyan/35 flex items-center justify-center transition duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isLoading ? (
               <>
@@ -130,7 +130,7 @@ const Signup = () => {
         {/* Footer Links */}
         <div className="mt-8 text-center text-sm text-netflix-textGray">
           <span>Already have an account? </span>
-          <Link to="/login" className="text-white hover:text-netflix-red font-bold underline transition duration-200">
+          <Link to="/login" className="text-white hover:text-cinema-cyan font-bold underline transition duration-200">
             Sign in
           </Link>
         </div>

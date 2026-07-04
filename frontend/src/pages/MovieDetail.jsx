@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import Navbar from '../components/Navbar';
 import client from '../api/client';
 import { ArrowLeft, Star, Download, Globe, Calendar, Tag, User2, Loader2, AlertTriangle } from 'lucide-react';
 
@@ -28,55 +27,47 @@ const MovieDetail = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-netflix-black text-white">
-        <Navbar />
-        <div className="h-screen flex flex-col items-center justify-center space-y-4">
-          <Loader2 className="w-12 h-12 text-netflix-red animate-spin" />
-          <p className="text-netflix-textGray">Loading movie details...</p>
-        </div>
+      <div className="min-h-screen bg-cinema-black text-white flex flex-col items-center justify-center space-y-4">
+        <Loader2 className="w-12 h-12 text-cinema-cyan animate-spin" />
+        <p className="text-cinema-textGray">Loading movie details...</p>
       </div>
     );
   }
 
   if (error || !movie) {
     return (
-      <div className="min-h-screen bg-netflix-black text-white">
-        <Navbar />
-        <div className="h-screen flex flex-col items-center justify-center space-y-4 px-6 text-center">
-          <AlertTriangle className="w-16 h-16 text-netflix-red" />
-          <h2 className="text-2xl font-bold text-white">Error Loading Movie</h2>
-          <p className="text-netflix-textGray max-w-md">{error || 'This movie may have been hidden by the administrator.'}</p>
-          <Link
-            to="/"
-            className="flex items-center space-x-2 px-6 py-2.5 rounded-lg bg-netflix-red hover:bg-red-700 font-bold transition mt-4"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            <span>Back to Home</span>
-          </Link>
-        </div>
+      <div className="min-h-screen bg-cinema-black text-white flex flex-col items-center justify-center space-y-4 px-6 text-center">
+        <AlertTriangle className="w-16 h-16 text-cinema-cyan" />
+        <h2 className="text-2xl font-bold text-white">Error Loading Movie</h2>
+        <p className="text-cinema-textGray max-w-md">{error || 'This movie may have been hidden by the administrator.'}</p>
+        <Link
+          to="/"
+          className="flex items-center space-x-2 px-6 py-2.5 rounded-lg bg-cinema-cyan text-black hover:bg-cinema-cyan/90 font-black transition mt-4"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          <span>Back to Home</span>
+        </Link>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-netflix-black text-white pb-16">
-      <Navbar />
-
+    <div className="min-h-screen bg-cinema-black text-white pb-16">
       {/* Cinematic Blur Background Poster */}
-      <div className="absolute top-0 left-0 right-0 h-[60vh] overflow-hidden opacity-25 z-0 pointer-events-none">
+      <div className="absolute top-0 left-0 right-0 h-[60vh] overflow-hidden opacity-20 z-0 pointer-events-none">
         <img
           src={movie.poster_url}
           alt=""
-          className="w-full h-full object-cover blur-2xl scale-110"
+          className="w-full h-full object-cover blur-3xl scale-110"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-netflix-black via-transparent to-netflix-black"></div>
+        <div className="absolute inset-0 bg-gradient-to-t from-cinema-black via-transparent to-cinema-black"></div>
       </div>
 
-      <div className="relative z-10 pt-28 px-6 md:px-12 max-w-6xl mx-auto">
+      <div className="relative z-10 pt-8 px-6 md:px-12 max-w-6xl mx-auto">
         {/* Back navigation */}
         <button
           onClick={() => navigate(-1)}
-          className="flex items-center space-x-2 text-netflix-textGray hover:text-white mb-8 group transition"
+          className="flex items-center space-x-2 text-cinema-textGray hover:text-white mb-8 group transition"
         >
           <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
           <span className="font-semibold">Back</span>
@@ -84,9 +75,9 @@ const MovieDetail = () => {
 
         {/* Detail Layout */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12">
-          {/* Left Column: Poster Image */}
+          {/* Left Column: Poster Image with Cyan shadow glow */}
           <div className="md:col-span-1 flex justify-center">
-            <div className="relative w-full max-w-[320px] aspect-[2/3] overflow-hidden rounded-xl shadow-2xl border border-white/10 group">
+            <div className="relative w-full max-w-[320px] aspect-[2/3] overflow-hidden rounded-xl shadow-2xl border border-cinema-cyan/20 hover:border-cinema-cyan/45 transition-all duration-300 shadow-cinema-cyan/10 group">
               <img
                 src={movie.poster_url}
                 alt={movie.title}
@@ -99,7 +90,7 @@ const MovieDetail = () => {
           {/* Right Column: Metadata & Details */}
           <div className="md:col-span-2 space-y-6">
             <div>
-              <h1 className="text-3xl md:text-5xl font-black tracking-tight mb-3">
+              <h1 className="text-3xl md:text-5xl font-black tracking-tight mb-3 uppercase">
                 {movie.title}
               </h1>
               
@@ -113,6 +104,56 @@ const MovieDetail = () => {
               </div>
             </div>
 
+            {/* Movie Description */}
+            <div className="space-y-2">
+              <h2 className="text-lg font-bold text-white tracking-wide uppercase">Synopsis</h2>
+              <p className="text-zinc-400 text-sm md:text-base leading-relaxed">
+                {movie.synopsis || 'No description available for this content.'}
+              </p>
+            </div>
+
+            {/* Ratings & Metadata Cards */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-2">
+              <div className="bg-zinc-900/50 border border-white/5 rounded-xl p-4 flex flex-col justify-center">
+                <span className="text-[10px] font-black text-cinema-cyan uppercase tracking-widest mb-1">IMDb Rating</span>
+                <div className="flex items-center space-x-1.5">
+                  <Star className="w-4 h-4 fill-amber-400 text-amber-400" />
+                  <span className="text-lg font-black text-white">{movie.rating ? movie.rating.toFixed(1) : '7.0'}/10</span>
+                </div>
+              </div>
+
+              <div className="bg-zinc-900/50 border border-white/5 rounded-xl p-4 flex flex-col justify-center">
+                <span className="text-[10px] font-black text-cinema-cyan uppercase tracking-widest mb-1">Release Year</span>
+                <span className="text-lg font-black text-white">{movie.year || '2026'}</span>
+              </div>
+
+              <div className="bg-zinc-900/50 border border-white/5 rounded-xl p-4 flex flex-col justify-center">
+                <span className="text-[10px] font-black text-cinema-cyan uppercase tracking-widest mb-1">Genre</span>
+                <span className="text-lg font-black text-white line-clamp-1">{movie.genre || 'N/A'}</span>
+              </div>
+
+              <div className="bg-zinc-900/50 border border-white/5 rounded-xl p-4 flex flex-col justify-center">
+                <span className="text-[10px] font-black text-cinema-cyan uppercase tracking-widest mb-1">Content Type</span>
+                <span className="text-lg font-black text-white capitalize">{movie.type || 'movie'}</span>
+              </div>
+            </div>
+
+            {/* Cast List */}
+            {movie.cast && movie.cast !== 'N/A' && (
+              <div className="space-y-2">
+                <h2 className="text-lg font-bold text-white tracking-wide uppercase">Cast Members</h2>
+                <div className="flex flex-wrap gap-2">
+                  {movie.cast.split(',').map((actor, idx) => (
+                    <span
+                      key={idx}
+                      className="px-3.5 py-1.5 rounded-lg bg-zinc-900/80 border border-white/5 text-zinc-300 text-xs font-semibold"
+                    >
+                      {actor.trim()}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
 
             {/* Download Link Trigger Button */}
             <div className="pt-4">
@@ -120,12 +161,12 @@ const MovieDetail = () => {
                 href={movie.download_link}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center space-x-3 bg-netflix-red hover:bg-red-700 text-white font-black text-lg py-4 px-8 rounded-xl shadow-lg hover:shadow-netflix-red/30 transition transform hover:-translate-y-0.5 cursor-pointer"
+                className="inline-flex items-center space-x-3 bg-cinema-cyan hover:bg-cinema-cyan/90 text-black font-black text-lg py-4 px-8 rounded-xl shadow-lg hover:shadow-cinema-cyan/30 transition transform hover:-translate-y-0.5 cursor-pointer"
               >
                 <Download className="w-5 h-5 stroke-[3px]" />
-                <span>Download Movie</span>
+                <span>Download Content</span>
               </a>
-              <p className="text-xs text-netflix-textGray mt-2 pl-1">
+              <p className="text-xs text-cinema-textGray mt-2 pl-1">
                 Note: This links to an external host (Drive, Mega, etc.). Make sure you have a safe connection.
               </p>
             </div>

@@ -12,6 +12,7 @@ import AdminDashboard from './pages/AdminDashboard';
 // Route Guards
 import ProtectedRoute from './components/ProtectedRoute';
 import AdminRoute from './components/AdminRoute';
+import MainLayout from './components/MainLayout';
 
 function App() {
   return (
@@ -29,7 +30,7 @@ function App() {
           },
           success: {
             iconTheme: {
-              primary: '#E50914',
+              primary: '#00e5ff',
               secondary: '#fff',
             },
           },
@@ -47,7 +48,9 @@ function App() {
           path="/" 
           element={
             <ProtectedRoute>
-              <Home />
+              <MainLayout>
+                <Home />
+              </MainLayout>
             </ProtectedRoute>
           } 
         />
@@ -55,7 +58,9 @@ function App() {
           path="/movies" 
           element={
             <ProtectedRoute>
-              <Home typeFilter="movie" />
+              <MainLayout>
+                <Home typeFilter="movie" />
+              </MainLayout>
             </ProtectedRoute>
           } 
         />
@@ -63,7 +68,9 @@ function App() {
           path="/webseries" 
           element={
             <ProtectedRoute>
-              <Home typeFilter="webseries" />
+              <MainLayout>
+                <Home typeFilter="webseries" />
+              </MainLayout>
             </ProtectedRoute>
           } 
         />
@@ -71,7 +78,9 @@ function App() {
           path="/movies/:id" 
           element={
             <ProtectedRoute>
-              <MovieDetail />
+              <MainLayout>
+                <MovieDetail />
+              </MainLayout>
             </ProtectedRoute>
           } 
         />

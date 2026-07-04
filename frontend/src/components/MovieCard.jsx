@@ -4,40 +4,41 @@ const MovieCard = ({ movie }) => {
   return (
     <Link
       to={`/movies/${movie.id}`}
-      className="group relative flex-none w-[160px] sm:w-[200px] md:w-[240px] aspect-[2/3] overflow-hidden rounded-lg bg-netflix-darkGray cursor-pointer transition-all duration-300 hover:scale-[1.08] hover:z-20 border border-white/[0.06] hover:border-red-600/50"
+      className="group relative flex-none w-[150px] sm:w-[180px] md:w-[210px] aspect-[2/3] overflow-hidden rounded-xl bg-zinc-950 cursor-pointer transition-all duration-300 hover:scale-[1.08] hover:z-20 border-2 border-transparent hover:border-cinema-cyan/80"
       style={{
-        boxShadow: 'var(--card-shadow, 0 4px 20px rgba(0,0,0,0.4))',
+        boxShadow: 'var(--card-shadow, 0 4px 20px rgba(0,0,0,0.5))',
       }}
       onMouseEnter={(e) => {
-        e.currentTarget.style.setProperty('--card-shadow', '0 8px 40px rgba(185, 9, 11, 0.35), 0 0 20px rgba(185, 9, 11, 0.15)');
+        e.currentTarget.style.setProperty('--card-shadow', '0 0 25px rgba(0, 229, 255, 0.45), 0 0 10px rgba(0, 229, 255, 0.2)');
       }}
       onMouseLeave={(e) => {
-        e.currentTarget.style.setProperty('--card-shadow', '0 4px 20px rgba(0,0,0,0.4)');
+        e.currentTarget.style.setProperty('--card-shadow', '0 4px 20px rgba(0,0,0,0.5)');
       }}
     >
-      {/* Poster Image — stays vivid on hover, slight brightness boost */}
+      {/* Poster Image — stays fully visible and vibrant, slight brightness scale on hover */}
       <img
         src={movie.poster_url}
         alt={movie.title}
-        className="w-full h-full object-cover transition-all duration-500 group-hover:scale-[1.05] group-hover:brightness-110"
+        className="w-full h-full object-cover transition-all duration-500 group-hover:scale-[1.06] group-hover:brightness-105"
         loading="lazy"
       />
 
-      {/* Bottom gradient overlay for title readability — only covers bottom 45% */}
-      <div className="absolute bottom-0 left-0 right-0 h-[45%] bg-gradient-to-t from-black via-black/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+      {/* Bottom gradient mask overlay */}
+      <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent opacity-80 group-hover:opacity-100 transition-opacity duration-300" />
 
-      {/* Title & Language Tag — slides up on hover */}
-      <div className="absolute bottom-0 left-0 right-0 p-3.5 translate-y-4 group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all duration-300">
-        <h3 className="text-sm md:text-base font-bold text-white leading-tight mb-1.5 line-clamp-2 drop-shadow-lg">
+      {/* Text details directly overlaying the bottom of the card */}
+      <div className="absolute bottom-0 left-0 right-0 p-3 flex flex-col items-center text-center">
+        <h3 className="text-xs sm:text-sm font-black text-white leading-tight uppercase tracking-wider line-clamp-2 drop-shadow-md mb-1.5 group-hover:text-cinema-cyan transition-colors duration-200">
           {movie.title}
         </h3>
         
-        <div className="flex items-center space-x-2 text-[10px] md:text-[11px]">
-          <span className="px-2 py-0.5 rounded-sm bg-netflix-red/90 text-white font-bold uppercase tracking-wider">
+        {/* Badges container */}
+        <div className="flex items-center space-x-1.5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-[9px]">
+          <span className="px-1.5 py-0.5 rounded bg-cinema-cyan/15 border border-cinema-cyan/30 text-cinema-cyan font-bold uppercase tracking-widest leading-none">
             {movie.language}
           </span>
           {movie.genre && (
-            <span className="px-1.5 py-0.5 rounded-sm bg-white/10 text-white/80 font-medium uppercase tracking-wider">
+            <span className="px-1.5 py-0.5 rounded bg-white/10 text-zinc-300 font-medium uppercase tracking-wider leading-none">
               {movie.genre}
             </span>
           )}

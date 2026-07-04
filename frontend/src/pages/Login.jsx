@@ -101,7 +101,7 @@ const Login = () => {
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full py-3.5 px-4 bg-netflix-red hover:bg-red-700 text-white font-bold rounded-xl shadow-lg hover:shadow-netflix-red/35 flex items-center justify-center transition duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full py-3.5 px-4 bg-cinema-cyan hover:bg-cinema-cyan/90 text-black font-black rounded-xl shadow-lg hover:shadow-cinema-cyan/35 flex items-center justify-center transition duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isLoading ? (
               <>
@@ -118,12 +118,12 @@ const Login = () => {
         <div className="mt-8 text-center text-sm text-netflix-textGray space-y-4">
           <div>
             <span>New to Dustin Hub? </span>
-            <Link to="/signup" className="text-white hover:text-netflix-red font-bold underline transition duration-200">
+            <Link to="/signup" className="text-white hover:text-cinema-cyan font-bold underline transition duration-200">
               Sign up now
             </Link>
           </div>
           <div className="pt-3 border-t border-white/5">
-            <Link to="/admin/login" className="text-netflix-textGray hover:text-netflix-red text-xs font-bold transition duration-200 uppercase tracking-wider">
+            <Link to="/admin/login" className="text-netflix-textGray hover:text-cinema-cyan text-xs font-bold transition duration-200 uppercase tracking-wider">
               Are you an Admin? Access Portal
             </Link>
           </div>
