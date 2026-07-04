@@ -26,10 +26,19 @@ origins = [
     "http://127.0.0.1:3000"
 ]
 
+allowed_origins_env = os.getenv("ALLOWED_ORIGINS")
+if allowed_origins_env:
+    origins.extend([origin.strip() for origin in allowed_origins_env.split(",") if origin.strip()])
+    allow_credentials = True
+else:
+    # Default to allow all for easy deployment since we use Bearer Tokens (no cookies)
+    origins = ["*"]
+    allow_credentials = False
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
-    allow_credentials=True,
+    allow_credentials=allow_credentials,
     allow_methods=["*"],
     allow_headers=["*"],
 )
