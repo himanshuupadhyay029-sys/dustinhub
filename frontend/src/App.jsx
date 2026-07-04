@@ -8,6 +8,9 @@ import Home from './pages/Home';
 import MovieDetail from './pages/MovieDetail';
 import AdminLogin from './pages/AdminLogin';
 import AdminDashboard from './pages/AdminDashboard';
+import MyList from './pages/MyList';
+import Profile from './pages/Profile';
+import Settings from './pages/Settings';
 
 // Route Guards
 import ProtectedRoute from './components/ProtectedRoute';
@@ -80,6 +83,36 @@ function App() {
             <ProtectedRoute>
               <MainLayout>
                 <MovieDetail />
+              </MainLayout>
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/mylist" 
+          element={
+            <ProtectedRoute>
+              <MainLayout>
+                <MyList />
+              </MainLayout>
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/profile" 
+          element={
+            <ProtectedRoute>
+              <MainLayout>
+                <Profile />
+              </MainLayout>
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/settings" 
+          element={
+            <ProtectedRoute>
+              <MainLayout>
+                <Settings />
               </MainLayout>
             </ProtectedRoute>
           } 

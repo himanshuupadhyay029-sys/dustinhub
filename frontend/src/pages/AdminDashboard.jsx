@@ -252,7 +252,7 @@ const AdminDashboard = () => {
             <ArrowLeft className="w-5 h-5" />
           </button>
           <div>
-            <h1 className="text-xl font-black tracking-wide flex items-center gap-1.5 uppercase text-cinema-cyan" style={{ textShadow: '0 0 10px rgba(0,229,255,0.2)' }}>
+            <h1 className="text-xl font-black tracking-wide flex items-center gap-1.5 uppercase text-cinema-red" style={{ textShadow: '0 0 10px rgba(229, 9, 20, 0.2)' }}>
               Control Panel
             </h1>
             <p className="text-xs text-zinc-500 font-bold">DUSTIN HUB MANAGER</p>
@@ -284,7 +284,7 @@ const AdminDashboard = () => {
           onClick={() => setActiveTab('movies')}
           className={`py-3.5 px-6 text-xs font-bold uppercase tracking-wider border-b-2 transition duration-200 ${
             activeTab === 'movies'
-              ? 'border-cinema-cyan text-cinema-cyan'
+              ? 'border-cinema-red text-cinema-red'
               : 'border-transparent text-zinc-500 hover:text-white'
           }`}
         >
@@ -294,7 +294,7 @@ const AdminDashboard = () => {
           onClick={() => setActiveTab('users')}
           className={`py-3.5 px-6 text-xs font-bold uppercase tracking-wider border-b-2 transition duration-200 ${
             activeTab === 'users'
-              ? 'border-cinema-cyan text-cinema-cyan'
+              ? 'border-cinema-red text-cinema-red'
               : 'border-transparent text-zinc-500 hover:text-white'
           }`}
         >
@@ -314,7 +314,7 @@ const AdminDashboard = () => {
                   placeholder="Search table by title or genre..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full bg-zinc-950 border border-zinc-800 rounded-lg pl-10 pr-4 py-2.5 text-sm text-white placeholder-zinc-500 focus:outline-none focus:ring-1 focus:ring-cinema-cyan focus:border-cinema-cyan"
+                  className="w-full bg-zinc-950 border border-zinc-800 rounded-lg pl-10 pr-4 py-2.5 text-sm text-white placeholder-zinc-500 focus:outline-none focus:ring-1 focus:ring-cinema-red focus:border-cinema-red"
                 />
                 <Search className="absolute left-3 top-3 text-zinc-500 w-4 h-4" />
               </div>
@@ -322,7 +322,7 @@ const AdminDashboard = () => {
               {/* Add movie button */}
               <button
                 onClick={handleOpenAddModal}
-                className="flex items-center justify-center space-x-2 bg-cinema-cyan hover:bg-cinema-cyan/90 text-black font-black px-5 py-2.5 rounded-lg text-sm transition shadow-lg shadow-cinema-cyan/15"
+                className="flex items-center justify-center space-x-2 bg-cinema-red hover:bg-cinema-red/90 text-white font-black px-5 py-2.5 rounded-lg text-sm transition shadow-lg shadow-cinema-red/15"
               >
                 <Plus className="w-4 h-4 stroke-[3px]" />
                 <span>Add New Movie</span>
@@ -675,7 +675,7 @@ const AdminDashboard = () => {
                 <button
                   type="submit"
                   disabled={isSubmitLoading}
-                  className="flex items-center space-x-1.5 bg-cinema-cyan hover:bg-cinema-cyan/90 text-black font-black px-5 py-2.5 rounded-lg text-sm transition disabled:opacity-50"
+                  className="flex items-center space-x-1.5 bg-cinema-red hover:bg-cinema-red/90 text-white font-black px-5 py-2.5 rounded-lg text-sm transition disabled:opacity-50"
                 >
                   {isSubmitLoading ? (
                     <>

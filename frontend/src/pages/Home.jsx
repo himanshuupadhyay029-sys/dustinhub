@@ -91,7 +91,7 @@ const Home = ({ typeFilter }) => {
       {/* Hero Banner (Only shown if we have a hero movie and are not currently searching) */}
       {isLoading ? (
         <div className="h-[70vh] flex flex-col items-center justify-center space-y-4">
-          <Loader2 className="w-12 h-12 text-cinema-cyan animate-spin" />
+          <Loader2 className="w-12 h-12 text-cinema-red animate-spin" />
           <p className="text-cinema-textGray">Loading catalog...</p>
         </div>
       ) : searchQuery ? (
@@ -107,18 +107,18 @@ const Home = ({ typeFilter }) => {
               alt=""
               className="absolute inset-0 w-full h-full object-cover opacity-[0.25] blur-3xl scale-125"
             />
-            {/* Layer 2: Volumetric Cyan spotlight behind the poster area */}
+            {/* Layer 2: Volumetric Red spotlight behind the poster area */}
             <div
               className="absolute inset-0"
               style={{
-                background: 'radial-gradient(ellipse at 75% 45%, rgba(0, 229, 255, 0.18) 0%, rgba(0, 229, 255, 0.05) 40%, transparent 70%)',
+                background: 'radial-gradient(ellipse at 75% 45%, rgba(229, 9, 20, 0.18) 0%, rgba(229, 9, 20, 0.05) 40%, transparent 70%)',
               }}
             />
             {/* Layer 3: Warm ambient color wash */}
             <div
               className="absolute inset-0"
               style={{
-                background: 'radial-gradient(ellipse at 25% 65%, rgba(0, 229, 255, 0.04) 0%, transparent 55%)',
+                background: 'radial-gradient(ellipse at 25% 65%, rgba(229, 9, 20, 0.04) 0%, transparent 55%)',
               }}
             />
             {/* Layer 4: Fades */}
@@ -132,7 +132,7 @@ const Home = ({ typeFilter }) => {
             {/* Left Content Column */}
             <div className="flex-1 text-center md:text-left space-y-4">
               <div className="flex items-center justify-center md:justify-start space-x-2.5">
-                <span className="px-2.5 py-0.5 rounded bg-cinema-cyan/10 border border-cinema-cyan/35 text-cinema-cyan text-[10px] font-black uppercase tracking-widest">
+                <span className="px-2.5 py-0.5 rounded bg-cinema-red/10 border border-cinema-red/35 text-cinema-red text-[10px] font-black uppercase tracking-widest">
                   STREAMING NOW
                 </span>
                 <span className="px-2 py-0.5 rounded bg-white/10 text-white text-[10px] font-bold uppercase tracking-wider">
@@ -146,8 +146,8 @@ const Home = ({ typeFilter }) => {
 
               {/* Tagline & Metadata info */}
               <div className="flex flex-col space-y-3">
-                <p className="text-cinema-cyan/90 text-xs md:text-sm font-bold tracking-widest uppercase">
-                  A Discovery Journey Cataloged Live
+                <p className="text-cinema-red/90 text-xs md:text-sm font-bold tracking-widest uppercase">
+                  Discover Quality Content Curated Live
                 </p>
                 <div className="flex items-center justify-center md:justify-start space-x-3 text-xs md:text-sm font-semibold text-zinc-400">
                   <span className="px-1.5 py-0.5 rounded bg-amber-400 text-black font-black text-[9px] tracking-wider leading-none">
@@ -183,10 +183,10 @@ const Home = ({ typeFilter }) => {
               <div
                 className="absolute -inset-6 rounded-2xl opacity-60 blur-2xl"
                 style={{
-                  background: 'radial-gradient(ellipse, rgba(0, 229, 255, 0.35), transparent 70%)',
+                  background: 'radial-gradient(ellipse, rgba(229, 9, 20, 0.35), transparent 70%)',
                 }}
               />
-              <div className="relative w-[230px] lg:w-[260px] aspect-[2/3] overflow-hidden rounded-xl shadow-2xl border border-cinema-cyan/20 hover:border-cinema-cyan/50 transition-all duration-500 hover:scale-[1.02]">
+              <div className="relative w-[230px] lg:w-[260px] aspect-[2/3] overflow-hidden rounded-xl shadow-2xl border border-cinema-red/20 hover:border-cinema-red/50 transition-all duration-500 hover:scale-[1.02]">
                 <img
                   src={heroMovie.poster_url}
                   alt={heroMovie.title}

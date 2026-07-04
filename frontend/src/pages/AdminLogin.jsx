@@ -98,7 +98,7 @@ const AdminLogin = () => {
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full py-3.5 px-4 bg-red-700 hover:bg-red-600 text-white font-bold rounded-xl shadow-lg flex items-center justify-center transition duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full py-3.5 px-4 bg-cinema-red hover:bg-cinema-red/95 text-white font-black rounded-xl shadow-lg hover:shadow-cinema-red/35 flex items-center justify-center transition duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isLoading ? (
               <>
@@ -114,7 +114,7 @@ const AdminLogin = () => {
         <div className="mt-8 pt-6 border-t border-zinc-900 text-center">
           <button
             onClick={() => navigate('/')}
-            className="inline-flex items-center space-x-1.5 text-xs font-bold uppercase text-zinc-400 hover:text-white transition"
+            className="inline-flex items-center space-x-1.5 text-xs font-bold uppercase text-zinc-400 hover:text-cinema-red transition"
           >
             <Home className="w-4 h-4" />
             <span>Return to User Site</span>

@@ -1,6 +1,6 @@
 import { NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { useAuthStore } from '../store/useAuthStore';
-import { Menu, Home, Film, Tv, List, User, Settings, LogOut } from 'lucide-react';
+import { Menu, Home, Film, Tv, List, User, Settings, LogOut, Search } from 'lucide-react';
 import toast from 'react-hot-toast';
 import Header from './Header';
 
@@ -15,13 +15,26 @@ const MainLayout = ({ children }) => {
     navigate('/login');
   };
 
+  const handleSearchClick = (e) => {
+    e.preventDefault();
+    navigate('/');
+    setTimeout(() => {
+      const input = document.querySelector('input[placeholder="Search movies, genres..."]');
+      if (input) {
+        input.focus();
+        input.select();
+      }
+    }, 100);
+  };
+
   const navItems = [
+    { icon: Search, path: 'search', label: 'Search', onClick: handleSearchClick },
     { icon: Home, path: '/', label: 'Home' },
     { icon: Film, path: '/movies', label: 'Movies' },
     { icon: Tv, path: '/webseries', label: 'Web Series' },
-    { icon: List, path: '#', label: 'My List' },
-    { icon: User, path: '#', label: 'Profile' },
-    { icon: Settings, path: '#', label: 'Settings' }
+    { icon: List, path: '/mylist', label: 'My List' },
+    { icon: User, path: '/profile', label: 'Profile' },
+    { icon: Settings, path: '/settings', label: 'Settings' }
   ];
 
   return (
@@ -37,20 +50,19 @@ const MainLayout = ({ children }) => {
         <nav className="flex flex-col space-y-5 md:space-y-6 w-full items-center">
           {navItems.map((item, idx) => {
             const Icon = item.icon;
-            const isDummy = item.path === '#';
             const isActive = location.pathname === item.path;
 
             const buttonContent = (
               <div className="relative group/btn py-2 px-1 w-full flex items-center justify-center cursor-pointer">
-                {/* Active Cyan Left Highlight indicator */}
+                {/* Active Red Left Highlight indicator */}
                 {isActive && (
-                  <div className="absolute left-0 top-0 bottom-0 w-[3px] bg-cinema-cyan rounded-r-md shadow-[0_0_10px_#00e5ff]" />
+                  <div className="absolute left-0 top-0 bottom-0 w-[3px] bg-cinema-red rounded-r-md shadow-[0_0_10px_#e50914]" />
                 )}
                 
-                {/* Icon Container with subtle glow on active/hover */}
+                {/* Icon Container with subtle red glow on active/hover */}
                 <div className={`p-2.5 rounded-xl transition-all duration-300 ${
                   isActive 
-                    ? 'bg-cinema-cyan/10 text-cinema-cyan shadow-[0_0_15px_rgba(0,229,255,0.15)]' 
+                    ? 'bg-cinema-red/10 text-cinema-red shadow-[0_0_15px_rgba(229,9,20,0.15)]' 
                     : 'text-zinc-500 hover:text-white hover:bg-white/5'
                 }`}>
                   <Icon className="w-5.5 h-5.5 transition-transform duration-300 group-hover/btn:scale-110" />
@@ -63,8 +75,12 @@ const MainLayout = ({ children }) => {
               </div>
             );
 
-            if (isDummy) {
-              return <div key={idx} className="w-full">{buttonContent}</div>;
+            if (item.onClick) {
+              return (
+                <button key={item.label} onClick={item.onClick} className="w-full focus:outline-none">
+                  {buttonContent}
+                </button>
+              );
             }
 
             return (

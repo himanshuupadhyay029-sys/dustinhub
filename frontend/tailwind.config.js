@@ -8,15 +8,15 @@ export default {
     extend: {
       colors: {
         cinema: {
-          cyan: '#00e5ff',
-          cyanGlow: 'rgba(0, 229, 255, 0.35)',
+          red: '#e50914',
+          redGlow: 'rgba(229, 9, 20, 0.35)',
           black: '#050505',
           darkGray: '#09090b',
           lightGray: '#121214',
           textGray: '#9ca3af'
         },
         netflix: {
-          red: '#00e5ff', // Mapped to Cinema Cyan for backward compatibility
+          red: '#e50914',
           black: '#050505',
           darkGray: '#09090b',
           lightGray: '#121214',

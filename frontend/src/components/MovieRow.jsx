@@ -20,7 +20,7 @@ const MovieRow = ({ title, movies }) => {
 
   return (
     <div className="space-y-2 md:space-y-4 px-6 md:px-12 my-8 relative group">
-      <h2 className="text-lg md:text-2xl font-bold tracking-wide text-white hover:text-cinema-cyan transition-colors duration-200">
+      <h2 className="text-lg md:text-2xl font-bold tracking-wide text-white hover:text-cinema-red transition-colors duration-200">
         {title}
       </h2>
 
