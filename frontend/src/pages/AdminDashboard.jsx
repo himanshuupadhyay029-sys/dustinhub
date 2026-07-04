@@ -159,8 +159,8 @@ const AdminDashboard = () => {
   const handleFormSubmit = async (e) => {
     e.preventDefault();
 
-    // Basic Validations
-    if (!title || !type || !genre || !year || !language || !rating || !synopsis || !cast || !posterUrl || !downloadLink) {
+    // Basic Validations - only check fields that are in the form
+    if (!title || !type || !genre || !language || !posterUrl || !downloadLink) {
       toast.error('All fields are required');
       return;
     }
@@ -189,11 +189,11 @@ const AdminDashboard = () => {
       title,
       type,
       genre,
-      year: parseInt(year),
+      year: year ? parseInt(year) : 2026,
       language,
-      rating: parseFloat(rating),
-      synopsis,
-      cast,
+      rating: rating ? parseFloat(rating) : 7.0,
+      synopsis: synopsis || 'No description available.',
+      cast: cast || 'N/A',
       poster_url: posterUrl,
       download_link: downloadLink,
       is_visible: isVisible
@@ -230,8 +230,8 @@ const AdminDashboard = () => {
 
   // Search filter
   const filteredMovies = movies.filter(movie => 
-    movie.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    movie.genre.toLowerCase().includes(searchQuery.toLowerCase())
+    (movie.title || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+    (movie.genre || '').toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const filteredUsers = users.filter(user => 

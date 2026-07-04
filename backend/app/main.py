@@ -55,35 +55,37 @@ def health_check():
     """
     return {"status": "healthy", "service": "Movie Catalog API"}
 
-# Programmatically run Alembic migrations on startup to keep tables up-to-date
-try:
-    from alembic.config import Config
-    from alembic import command
-    from sqlalchemy import inspect
-    
-    # Locate alembic.ini relative to this file
-    base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    ini_path = os.path.join(base_dir, "alembic.ini")
-    
-    # Set the configuration path
-    alembic_cfg = Config(ini_path)
-    # Ensure alembic script directory is found correctly
-    alembic_cfg.set_main_option("script_location", os.path.join(base_dir, "alembic"))
-    
-    # Check if database already has tables created via create_all
-    inspector = inspect(engine)
-    tables = inspector.get_table_names()
-    if "movies" in tables and "alembic_version" not in tables:
-        print("Existing database tables found without Alembic tracking. Stamping database to initial schema revision...")
-        command.stamp(alembic_cfg, "1a2b3c4d5e6f")
-        
-    command.upgrade(alembic_cfg, "head")
-    print("Alembic database migrations applied successfully.")
-except Exception as e:
-    print(f"Alembic migration failed to run on startup: {e}")
+# --- Database Initialization & Schema Migration ---
+# This runs on every startup to ensure tables exist and schema is up-to-date.
+# We use raw SQL for migrations because Alembic files are gitignored and not on the server.
+from sqlalchemy import text, inspect as sa_inspect
 
-# Fallback auto-creation
 try:
+    # Step 1: Create tables if they don't exist at all (first-time deployment)
     Base.metadata.create_all(bind=engine)
+    print("Database tables verified/created successfully.")
 except Exception as e:
-    print(f"Database connection error or table creation skipped: {e}")
+    print(f"Database table creation error: {e}")
+
+try:
+    # Step 2: Run manual schema migrations using raw SQL
+    # This handles adding new columns to existing tables (which create_all cannot do)
+    inspector = sa_inspect(engine)
+    
+    if "movies" in inspector.get_table_names():
+        existing_columns = [col["name"] for col in inspector.get_columns("movies")]
+        
+        # Migration: Add 'type' column if it doesn't exist
+        if "type" not in existing_columns:
+            with engine.begin() as conn:
+                conn.execute(text(
+                    "ALTER TABLE movies ADD COLUMN type VARCHAR NOT NULL DEFAULT 'movie'"
+                ))
+            print("Migration applied: Added 'type' column to movies table.")
+        else:
+            print("Schema is up-to-date. No migrations needed.")
+    else:
+        print("Movies table will be created by create_all above.")
+        
+except Exception as e:
+    print(f"Schema migration error: {e}")
