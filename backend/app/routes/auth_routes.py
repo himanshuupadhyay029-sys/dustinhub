@@ -5,7 +5,7 @@ from slowapi.util import get_remote_address
 from ..database import get_db
 from ..models import User, UserRole
 from ..schemas import UserCreate, UserLogin, UserResponse, Token
-from ..auth import verify_password, get_password_hash, create_access_token
+from ..auth import verify_password, get_password_hash, create_access_token, get_current_user
 
 router = APIRouter(prefix="/api/auth", tags=["Authentication"])
 
@@ -56,3 +56,10 @@ def login(request: Request, user_credentials: UserLogin, db: Session = Depends(g
     # Generate JWT token
     access_token = create_access_token(data={"sub": user.email, "role": user.role.value})
     return {"access_token": access_token, "token_type": "bearer"}
+
+@router.get("/me", response_model=UserResponse)
+def get_me(current_user: User = Depends(get_current_user)):
+    """
+    Get profile information of the currently authenticated user.
+    """
+    return current_user

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { useAuthStore } from '../store/useAuthStore';
-import { Menu, Home, Film, Tv, List, User, LogOut, Search } from 'lucide-react';
+import { Menu, Home, Film, Tv, List, User, LogOut } from 'lucide-react';
 import toast from 'react-hot-toast';
 import Header from './Header';
 
@@ -19,20 +19,7 @@ const MainLayout = ({ children }) => {
     navigate('/login');
   };
 
-  const handleSearchClick = (e) => {
-    e.preventDefault();
-    navigate('/');
-    setTimeout(() => {
-      const input = document.querySelector('input[placeholder="Search movies, genres..."]');
-      if (input) {
-        input.focus();
-        input.select();
-      }
-    }, 100);
-  };
-
   const navItems = [
-    { icon: Search, path: 'search', label: 'Search', onClick: handleSearchClick },
     { icon: Home, path: '/', label: 'Home' },
     { icon: Film, path: '/movies', label: 'Movies' },
     { icon: Tv, path: '/webseries', label: 'Web Series' },

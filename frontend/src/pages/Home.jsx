@@ -13,6 +13,7 @@ const Home = ({ typeFilter }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [isSearching, setIsSearching] = useState(false);
   const [heroMovie, setHeroMovie] = useState(null);
+  const [imageError, setImageError] = useState(false);
 
   const { searchQuery, setSearchQuery } = useAuthStore((state) => ({
     searchQuery: state.searchQuery,
@@ -102,11 +103,21 @@ const Home = ({ typeFilter }) => {
           {/* Background Multi-Layer Cinematic Glow System */}
           <div className="absolute inset-0 z-0 overflow-hidden">
             {/* Layer 1: Blurred poster backdrop — scaled and dimmed for deep space texture */}
-            <img
-              src={heroMovie.poster_url}
-              alt=""
-              className="absolute inset-0 w-full h-full object-cover opacity-[0.25] blur-3xl scale-125"
-            />
+            {!imageError ? (
+              <img
+                src={heroMovie.poster_url}
+                alt=""
+                className="absolute inset-0 w-full h-full object-cover opacity-[0.25] blur-3xl scale-125"
+                onError={() => setImageError(true)}
+              />
+            ) : (
+              <div
+                className="absolute inset-0"
+                style={{
+                  background: 'radial-gradient(circle at 50% 50%, rgba(229, 9, 20, 0.12) 0%, transparent 60%)',
+                }}
+              />
+            )}
             {/* Layer 2: Volumetric Red spotlight behind the poster area */}
             <div
               className="absolute inset-0"
@@ -187,11 +198,21 @@ const Home = ({ typeFilter }) => {
                 }}
               />
               <div className="relative w-[230px] lg:w-[260px] aspect-[2/3] overflow-hidden rounded-xl shadow-2xl border border-cinema-red/20 hover:border-cinema-red/50 transition-all duration-500 hover:scale-[1.02]">
-                <img
-                  src={heroMovie.poster_url}
-                  alt={heroMovie.title}
-                  className="w-full h-full object-cover"
-                />
+                {imageError ? (
+                  <div className="w-full h-full bg-gradient-to-br from-zinc-900 to-zinc-950 flex flex-col items-center justify-center p-6 text-center">
+                    <Film className="w-10 h-10 text-zinc-805 mb-3" />
+                    <span className="text-[10px] text-zinc-500 font-black uppercase tracking-wider line-clamp-3">
+                      {heroMovie.title}
+                    </span>
+                  </div>
+                ) : (
+                  <img
+                    src={heroMovie.poster_url}
+                    alt={heroMovie.title}
+                    className="w-full h-full object-cover"
+                    onError={() => setImageError(true)}
+                  />
+                )}
               </div>
             </div>
           </div>

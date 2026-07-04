@@ -1,6 +1,10 @@
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { Film } from 'lucide-react';
 
 const MovieCard = ({ movie }) => {
+  const [imageError, setImageError] = useState(false);
+
   return (
     <Link
       to={`/movies/${movie.id}`}
@@ -16,12 +20,19 @@ const MovieCard = ({ movie }) => {
       }}
     >
       {/* Poster Image — stays fully visible and vibrant, slight brightness scale on hover */}
-      <img
-        src={movie.poster_url}
-        alt={movie.title}
-        className="w-full h-full object-cover transition-all duration-500 group-hover:scale-[1.06] group-hover:brightness-105"
-        loading="lazy"
-      />
+      {imageError ? (
+        <div className="w-full h-full bg-gradient-to-br from-zinc-900 to-zinc-950 flex flex-col items-center justify-center p-4 text-center">
+          <Film className="w-8 h-8 text-zinc-800 mb-2 animate-pulse" />
+        </div>
+      ) : (
+        <img
+          src={movie.poster_url}
+          alt={movie.title}
+          className="w-full h-full object-cover transition-all duration-500 group-hover:scale-[1.06] group-hover:brightness-105"
+          onError={() => setImageError(true)}
+          loading="lazy"
+        />
+      )}
 
       {/* Bottom gradient mask overlay */}
       <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent opacity-80 group-hover:opacity-100 transition-opacity duration-300" />

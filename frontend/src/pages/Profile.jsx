@@ -1,10 +1,23 @@
 import { useState, useEffect } from 'react';
 import { useAuthStore } from '../store/useAuthStore';
+import client from '../api/client';
 import { User, Shield, Calendar, Sparkles } from 'lucide-react';
 
 const Profile = () => {
-  const { user } = useAuthStore((state) => ({ user: state.user }));
+  const { user, updateUser } = useAuthStore((state) => ({ user: state.user, updateUser: state.updateUser }));
   const [watchlistCount, setWatchlistCount] = useState(0);
+
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      try {
+        const response = await client.get('/api/auth/me');
+        updateUser(response.data);
+      } catch (err) {
+        console.error('Failed to load user profile', err);
+      }
+    };
+    fetchUserProfile();
+  }, [updateUser]);
 
   useEffect(() => {
     if (user) {

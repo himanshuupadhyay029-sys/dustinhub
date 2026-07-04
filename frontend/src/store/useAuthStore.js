@@ -31,5 +31,13 @@ export const useAuthStore = create((set) => ({
       isAuthenticated: false,
       isAdmin: false,
     });
+  },
+  
+  updateUser: (user) => {
+    localStorage.setItem('user', JSON.stringify(user));
+    set({
+      user,
+      isAdmin: user.role === 'admin',
+    });
   }
 }));

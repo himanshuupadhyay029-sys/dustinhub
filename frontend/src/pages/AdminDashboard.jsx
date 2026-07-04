@@ -251,43 +251,25 @@ const AdminDashboard = () => {
   );
 
   return (
-    <div className="min-h-screen bg-[#090909] text-white">
-      {/* Admin Top Header Bar */}
-      <header className="sticky top-0 z-40 bg-zinc-950 border-b border-zinc-800 px-6 py-4 flex items-center justify-between">
-        <div className="flex items-center space-x-3">
-          <button 
-            onClick={() => navigate('/')} 
-            className="p-1.5 rounded bg-zinc-900 border border-zinc-800 text-zinc-400 hover:text-white transition"
-            title="Go to main site"
-          >
-            <ArrowLeft className="w-5 h-5" />
-          </button>
-          <div>
-            <h1 className="text-xl font-black tracking-wide flex items-center gap-1.5 uppercase text-cinema-red" style={{ textShadow: '0 0 10px rgba(229, 9, 20, 0.2)' }}>
-              Control Panel
-            </h1>
-            <p className="text-xs text-zinc-500 font-bold">DUSTIN HUB MANAGER</p>
-          </div>
+    <div className="min-h-screen bg-cinema-black text-white pb-16">
+      {/* Inline Dashboard Header inside MainLayout content flow */}
+      <div className="max-w-7xl mx-auto px-6 pt-6 flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-black uppercase text-cinema-red tracking-wide" style={{ textShadow: '0 0 10px rgba(229, 9, 20, 0.15)' }}>
+            Control Panel
+          </h1>
+          <p className="text-xs text-zinc-500 font-bold uppercase tracking-wider">Dustin Hub Manager</p>
         </div>
-
-        <div className="flex items-center space-x-4">
+        <div className="flex items-center space-x-3">
           <button
             onClick={activeTab === 'movies' ? fetchMovies : fetchUsers}
-            className="p-2 rounded bg-zinc-900 border border-zinc-800 text-zinc-400 hover:text-white transition"
-            title="Refresh list"
+            className="p-2.5 rounded bg-zinc-900 border border-zinc-800 text-zinc-400 hover:text-white transition-all duration-200"
+            title="Refresh database list"
           >
             <RefreshCw className="w-4 h-4" />
           </button>
-
-          <button
-            onClick={handleLogout}
-            className="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-zinc-900 border border-zinc-800 text-zinc-300 hover:text-white text-sm font-semibold transition"
-          >
-            <LogOut className="w-4 h-4 text-zinc-400" />
-            <span>Logout</span>
-          </button>
         </div>
-      </header>
+      </div>
 
       {/* Tab Navigation */}
       <div className="max-w-7xl mx-auto px-6 pt-6 flex border-b border-zinc-800 bg-[#090909]">
