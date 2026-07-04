@@ -101,16 +101,34 @@ const Home = ({ typeFilter }) => {
         <div className="pt-24"></div>
       ) : heroMovie ? (
         <div className="relative h-[65vh] md:h-[80vh] w-full flex items-center justify-between px-6 md:px-12 pt-20">
-          {/* Background Blurred Ambient Glow */}
+          {/* Background Multi-Layer Cinematic Glow System */}
           <div className="absolute inset-0 z-0 overflow-hidden">
+            {/* Layer 1: Blurred poster backdrop — brighter and softer for texture */}
             <img
               src={heroMovie.poster_url}
               alt=""
-              className="w-full h-full object-cover opacity-20 blur-3xl scale-110"
+              className="absolute inset-0 w-full h-full object-cover opacity-[0.35] blur-2xl scale-125"
             />
-            {/* Cinematic Gradient Overlays */}
-            <div className="absolute inset-0 bg-gradient-to-t from-netflix-black via-netflix-black/40 to-black/80"></div>
-            <div className="absolute inset-0 bg-gradient-to-r from-netflix-black via-transparent to-transparent"></div>
+            {/* Layer 2: Volumetric red spotlight behind the poster area */}
+            <div
+              className="absolute inset-0"
+              style={{
+                background: 'radial-gradient(ellipse at 75% 45%, rgba(185, 9, 11, 0.22) 0%, rgba(185, 9, 11, 0.08) 35%, transparent 65%)',
+              }}
+            />
+            {/* Layer 3: Warm ambient color wash */}
+            <div
+              className="absolute inset-0"
+              style={{
+                background: 'radial-gradient(ellipse at 30% 60%, rgba(255, 140, 50, 0.06) 0%, transparent 50%)',
+              }}
+            />
+            {/* Layer 4: Bottom fade into page background */}
+            <div className="absolute inset-0 bg-gradient-to-t from-netflix-black via-netflix-black/50 to-transparent" />
+            {/* Layer 5: Left fade for text readability */}
+            <div className="absolute inset-0 bg-gradient-to-r from-netflix-black via-netflix-black/20 to-transparent" />
+            {/* Layer 6: Top vignette */}
+            <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-transparent" />
           </div>
 
           {/* Hero Content Grid */}
@@ -126,14 +144,14 @@ const Home = ({ typeFilter }) => {
                 </span>
               </div>
 
-              <h1 className="text-4xl md:text-6xl font-black tracking-tight leading-tight text-white drop-shadow-md">
+              <h1 className="text-4xl md:text-6xl font-black tracking-tight leading-tight text-white drop-shadow-lg">
                 {heroMovie.title}
               </h1>
 
               <div className="flex items-center justify-center md:justify-start space-x-4 pt-2">
                 <Link
                   to={`/movies/${heroMovie.id}`}
-                  className="flex items-center space-x-2 px-8 py-3.5 rounded-xl bg-white text-black font-black hover:bg-white/80 transition transform hover:-translate-y-0.5 shadow-lg"
+                  className="flex items-center space-x-2 px-8 py-3.5 rounded-xl bg-white text-black font-black hover:bg-white/90 transition-all duration-300 transform hover:-translate-y-0.5 shadow-lg hover:shadow-white/20"
                 >
                   <Info className="w-5 h-5 fill-black" />
                   <span>Get Details</span>
@@ -141,13 +159,22 @@ const Home = ({ typeFilter }) => {
               </div>
             </div>
 
-            {/* Right Poster Column */}
-            <div className="hidden md:block w-[240px] lg:w-[280px] aspect-[2/3] overflow-hidden rounded-xl shadow-2xl border border-white/15 transform hover:scale-[1.02] transition duration-300">
-              <img
-                src={heroMovie.poster_url}
-                alt={heroMovie.title}
-                className="w-full h-full object-cover"
+            {/* Right Poster Column — with ambient glow ring */}
+            <div className="hidden md:block relative">
+              {/* Poster glow aura */}
+              <div
+                className="absolute -inset-6 rounded-2xl opacity-60 blur-2xl"
+                style={{
+                  background: 'radial-gradient(ellipse, rgba(185, 9, 11, 0.35), transparent 70%)',
+                }}
               />
+              <div className="relative w-[240px] lg:w-[280px] aspect-[2/3] overflow-hidden rounded-xl shadow-2xl border border-white/15 transform hover:scale-[1.03] transition-all duration-500">
+                <img
+                  src={heroMovie.poster_url}
+                  alt={heroMovie.title}
+                  className="w-full h-full object-cover"
+                />
+              </div>
             </div>
           </div>
         </div>
