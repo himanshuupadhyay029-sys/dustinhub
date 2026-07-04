@@ -45,6 +45,36 @@ class MovieBase(BaseModel):
     download_link: str
     is_visible: bool = True
 
+    @field_validator('type', mode='before')
+    @classmethod
+    def val_type(cls, v: Optional[str]) -> str:
+        return v if v else "movie"
+
+    @field_validator('genre', mode='before')
+    @classmethod
+    def val_genre(cls, v: Optional[str]) -> str:
+        return v if v else "Movie"
+
+    @field_validator('synopsis', mode='before')
+    @classmethod
+    def val_synopsis(cls, v: Optional[str]) -> str:
+        return v if v else "No description available."
+
+    @field_validator('cast', mode='before')
+    @classmethod
+    def val_cast(cls, v: Optional[str]) -> str:
+        return v if v else "N/A"
+
+    @field_validator('year', mode='before')
+    @classmethod
+    def val_year(cls, v: Optional[int]) -> int:
+        return v if v is not None else 2026
+
+    @field_validator('rating', mode='before')
+    @classmethod
+    def val_rating(cls, v: Optional[float]) -> float:
+        return v if v is not None else 7.0
+
     @field_validator('poster_url', 'download_link')
     @classmethod
     def validate_urls(cls, v: str) -> str:

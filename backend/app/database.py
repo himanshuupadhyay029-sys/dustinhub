@@ -11,6 +11,9 @@ DATABASE_URL = os.getenv("DATABASE_URL")
 if not DATABASE_URL:
     raise ValueError("DATABASE_URL is not set in environment variables")
 
+if DATABASE_URL.startswith("postgres://"):
+    DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
+
 # SQLite special handling if someone falls back to SQLite, but we use PostgreSQL.
 # For postgresql, we just connect.
 engine = create_engine(DATABASE_URL)
