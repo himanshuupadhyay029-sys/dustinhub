@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:16
+    container_name: himeshnetflix-db
+    restart: always
+    environment:
+      POSTGRES_USER: himanshuadmin
+      POSTGRES_PASSWORD: Pass_MovieCatalog_9b3e1f72
+      POSTGRES_DB: moviecatalog
+    ports:
+      - "5433:5432"
+    volumes:
+      - himesh-pgdata:/var/lib/postgresql/data
+
+volumes:
+  himesh-pgdata:

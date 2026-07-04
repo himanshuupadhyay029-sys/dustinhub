@@ -1,0 +1,90 @@
+from datetime import datetime
+from typing import Optional
+from urllib.parse import urlparse
+from pydantic import BaseModel, EmailStr, Field, field_validator
+from .models import UserRole
+
+# User Schemas
+class UserCreate(BaseModel):
+    email: EmailStr
+    password: str = Field(..., min_length=6, description="Password must be at least 6 characters long")
+
+class UserLogin(BaseModel):
+    email: EmailStr
+    password: str
+
+class UserResponse(BaseModel):
+    id: int
+    email: EmailStr
+    role: UserRole
+    created_at: datetime
+
+    class Config:
+        from_attributes = True
+
+# Token Schemas
+class Token(BaseModel):
+    access_token: str
+    token_type: str
+
+class TokenData(BaseModel):
+    email: Optional[str] = None
+    role: Optional[UserRole] = None
+
+# Movie Schemas
+class MovieBase(BaseModel):
+    title: str = Field(..., min_length=1)
+    genre: str = Field(..., min_length=1)
+    year: int = Field(..., ge=1880, le=2100)
+    language: str = Field(..., min_length=1)
+    synopsis: str = Field(..., min_length=1)
+    cast: str = Field(..., description="Comma-separated list of actors")
+    rating: float = Field(..., ge=0.0, le=10.0)
+    poster_url: str
+    download_link: str
+    is_visible: bool = True
+
+    @field_validator('poster_url', 'download_link')
+    @classmethod
+    def validate_urls(cls, v: str) -> str:
+        parsed = urlparse(v)
+        if not parsed.scheme or parsed.scheme not in ("http", "https"):
+            raise ValueError("URL must start with http or https")
+        if not parsed.netloc:
+            raise ValueError("URL must contain a valid domain/host")
+        return v
+
+class MovieCreate(MovieBase):
+    pass
+
+class MovieUpdate(BaseModel):
+    title: Optional[str] = None
+    genre: Optional[str] = None
+    year: Optional[int] = None
+    language: Optional[str] = None
+    synopsis: Optional[str] = None
+    cast: Optional[str] = None
+    rating: Optional[float] = None
+    poster_url: Optional[str] = None
+    download_link: Optional[str] = None
+    is_visible: Optional[bool] = None
+
+    @field_validator('poster_url', 'download_link')
+    @classmethod
+    def validate_urls(cls, v: Optional[str]) -> Optional[str]:
+        if v is None:
+            return v
+        parsed = urlparse(v)
+        if not parsed.scheme or parsed.scheme not in ("http", "https"):
+            raise ValueError("URL must start with http or https")
+        if not parsed.netloc:
+            raise ValueError("URL must contain a valid domain/host")
+        return v
+
+class MovieResponse(MovieBase):
+    id: int
+    created_at: datetime
+    updated_at: datetime
+
+    class Config:
+        from_attributes = True
