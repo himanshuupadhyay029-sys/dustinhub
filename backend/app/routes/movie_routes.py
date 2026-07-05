@@ -31,24 +31,6 @@ def get_visible_movies(
         
     return query.order_by(Movie.created_at.desc()).all()
 
-@router.get("/{movie_id}", response_model=MovieResponse)
-def get_movie_detail(
-    movie_id: int,
-    db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
-):
-    """
-    Get detailed information about a single movie.
-    Only movies that are visible can be accessed by regular users.
-    """
-    movie = db.query(Movie).filter(Movie.id == movie_id, Movie.is_visible == True).first()
-    if not movie:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Movie not found or is hidden"
-        )
-    return movie
-
 @router.post("/requests", response_model=MovieRequestResponse, status_code=status.HTTP_201_CREATED)
 def create_movie_request(
     request_in: MovieRequestCreate,
@@ -87,4 +69,23 @@ def get_user_movie_requests(
     for r in requests:
         r.user_email = current_user.email
     return requests
+
+@router.get("/{movie_id}", response_model=MovieResponse)
+def get_movie_detail(
+    movie_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    """
+    Get detailed information about a single movie.
+    Only movies that are visible can be accessed by regular users.
+    """
+    movie = db.query(Movie).filter(Movie.id == movie_id, Movie.is_visible == True).first()
+    if not movie:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Movie not found or is hidden"
+        )
+    return movie
+
 

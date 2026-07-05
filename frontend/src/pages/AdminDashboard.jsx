@@ -147,10 +147,17 @@ const AdminDashboard = () => {
     setIsModalOpen(true);
   };
 
+  const parseUtcDate = (dateStr) => {
+    if (!dateStr) return null;
+    const cleanStr = (!dateStr.endsWith('Z') && !/[+-]\d{2}:\d{2}$/.test(dateStr)) ? `${dateStr}Z` : dateStr;
+    const d = new Date(cleanStr);
+    return isNaN(d.getTime()) ? null : d;
+  };
+
   const formatInTimeZone = (dateStr, timeZone, label) => {
     try {
-      const date = new Date(dateStr);
-      if (isNaN(date.getTime())) return 'N/A';
+      const date = parseUtcDate(dateStr);
+      if (!date) return 'N/A';
       const formatter = new Intl.DateTimeFormat('en-US', {
         day: '2-digit',
         month: 'short',
@@ -678,7 +685,7 @@ const AdminDashboard = () => {
                         <th className="py-4 px-6">User Email</th>
                         <th className="py-4 px-6">Requested Title</th>
                         <th className="py-4 px-6 text-center">Type</th>
-                        <th className="py-4 px-6">Target Needed Time (IST / AEST)</th>
+                        <th className="py-4 px-6">Target Needed Time (IST / Melbourne)</th>
                         <th className="py-4 px-6 text-center">Status</th>
                         <th className="py-4 px-6">Date Requested</th>
                         <th className="py-4 px-6 text-right">Actions</th>
@@ -711,7 +718,7 @@ const AdminDashboard = () => {
                                 {formatInTimeZone(req.needed_by, 'Asia/Kolkata', 'IST')}
                               </span>
                               <span className={`text-xs ${req.timezone === 'AEST' ? 'text-white font-extrabold' : 'text-zinc-400'}`}>
-                                {formatInTimeZone(req.needed_by, 'Australia/Sydney', 'AEST/AEDT')}
+                                {formatInTimeZone(req.needed_by, 'Australia/Melbourne', 'Melbourne Time')}
                               </span>
                             </div>
                           </td>
@@ -729,7 +736,7 @@ const AdminDashboard = () => {
 
                           {/* Date Requested */}
                           <td className="py-4 px-6 text-zinc-500 text-xs">
-                            {new Date(req.created_at).toLocaleString()}
+                            {parseUtcDate(req.created_at)?.toLocaleString()}
                           </td>
 
                           {/* Actions */}

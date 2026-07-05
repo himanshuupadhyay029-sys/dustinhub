@@ -46,6 +46,28 @@ const UserRequests = () => {
     setIsModalOpen(false);
   };
 
+  const parseUtcDate = (dateStr) => {
+    if (!dateStr) return null;
+    const cleanStr = (!dateStr.endsWith('Z') && !/[+-]\d{2}:\d{2}$/.test(dateStr)) ? `${dateStr}Z` : dateStr;
+    const d = new Date(cleanStr);
+    return isNaN(d.getTime()) ? null : d;
+  };
+
+  const getOffset = (tz, dateStr) => {
+    if (tz === 'IST') return '+05:30';
+    // Melbourne Time: Standard is +10:00, DST is +11:00 (Oct to Apr)
+    try {
+      const parts = dateStr.split('-');
+      if (parts.length >= 2) {
+        const month = parseInt(parts[1], 10); // 1-12
+        if (month >= 10 || month <= 4) {
+          return '+11:00';
+        }
+      }
+    } catch (e) {}
+    return '+10:00';
+  };
+
   const handleFormSubmit = async (e) => {
     e.preventDefault();
     if (!title.trim()) {
@@ -59,7 +81,7 @@ const UserRequests = () => {
 
     setIsSubmitLoading(true);
     try {
-      const tzOffset = timezone === 'IST' ? '+05:30' : '+10:00';
+      const tzOffset = getOffset(timezone, neededDateTime);
       const utcDateTime = new Date(`${neededDateTime}${tzOffset}`).toISOString();
 
       await client.post('/api/movies/requests', {
@@ -83,8 +105,8 @@ const UserRequests = () => {
   // Helper to format date in timezones
   const formatInTimeZone = (dateStr, timeZone, label) => {
     try {
-      const date = new Date(dateStr);
-      if (isNaN(date.getTime())) return 'N/A';
+      const date = parseUtcDate(dateStr);
+      if (!date) return 'N/A';
       
       const formatter = new Intl.DateTimeFormat('en-US', {
         day: '2-digit',
@@ -217,7 +239,7 @@ const UserRequests = () => {
                       </div>
                       <div className="flex items-center justify-between border-t border-white/5 pt-1.5">
                         <span className={`text-xs ${req.timezone === 'AEST' ? 'text-white font-extrabold' : 'text-zinc-400 font-medium'}`}>
-                          {formatInTimeZone(req.needed_by, 'Australia/Sydney', 'AEST/AEDT')}
+                          {formatInTimeZone(req.needed_by, 'Australia/Melbourne', 'Melbourne Time')}
                         </span>
                         {req.timezone === 'AEST' && (
                           <span className="text-[8px] bg-cinema-red/10 border border-cinema-red/20 text-cinema-red px-1 rounded font-black uppercase">Chosen</span>
@@ -237,7 +259,7 @@ const UserRequests = () => {
                     <div className="text-right sm:text-right mt-2 sm:mt-0 flex flex-col">
                       <span className="text-[9px] text-zinc-500 font-bold uppercase tracking-wider">Uploaded On</span>
                       <span className="text-xs text-emerald-400 font-bold mt-0.5">
-                        {new Date(req.completed_at).toLocaleDateString('en-US', { day: '2-digit', month: 'short', year: 'numeric' })}
+                        {parseUtcDate(req.completed_at)?.toLocaleDateString('en-US', { day: '2-digit', month: 'short', year: 'numeric' })}
                       </span>
                     </div>
                   )}
@@ -339,7 +361,7 @@ const UserRequests = () => {
                     }`}
                   >
                     <Globe className="w-3.5 h-3.5 text-cinema-red" />
-                    <span>AEST (Australian)</span>
+                    <span>Melbourne Time</span>
                   </button>
                 </div>
               </div>
