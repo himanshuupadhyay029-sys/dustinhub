@@ -4,9 +4,10 @@ from typing import List, Optional
 from slowapi import Limiter
 from slowapi.util import get_remote_address
 from ..database import get_db
-from ..models import Movie, User, UserRole
-from ..schemas import MovieCreate, MovieUpdate, MovieResponse, UserLogin, Token, UserResponse
+from ..models import Movie, User, UserRole, MovieRequest
+from ..schemas import MovieCreate, MovieUpdate, MovieResponse, UserLogin, Token, UserResponse, MovieRequestResponse
 from ..auth import get_current_admin, verify_password, create_access_token
+from datetime import datetime
 
 router = APIRouter(prefix="/api/admin", tags=["Admin Actions"])
 
@@ -69,6 +70,21 @@ def add_movie(
     db.add(db_movie)
     db.commit()
     db.refresh(db_movie)
+    
+    # Auto-complete pending user requests for this movie / webseries (case-insensitive)
+    matching_requests = db.query(MovieRequest).filter(
+        MovieRequest.status == "Pending",
+        MovieRequest.type == db_movie.type,
+        MovieRequest.title.ilike(db_movie.title)
+    ).all()
+    
+    for req in matching_requests:
+        req.status = "Completed"
+        req.completed_at = datetime.utcnow()
+        
+    if matching_requests:
+        db.commit()
+        
     return db_movie
 
 @router.put("/movies/{movie_id}", response_model=MovieResponse)
@@ -197,3 +213,47 @@ def update_user_tier(
     db.commit()
     db.refresh(db_user)
     return db_user
+
+@router.get("/requests", response_model=List[MovieRequestResponse])
+def get_all_movie_requests_admin(
+    db: Session = Depends(get_db),
+    current_admin: User = Depends(get_current_admin)
+):
+    """
+    Get all user movie/webseries requests.
+    Only accessible by administrators.
+    """
+    results = db.query(MovieRequest, User.email).join(User, MovieRequest.user_id == User.id).order_by(MovieRequest.created_at.desc()).all()
+    
+    requests = []
+    for request, email in results:
+        request.user_email = email
+        requests.append(request)
+    return requests
+
+@router.post("/requests/{request_id}/complete", response_model=MovieRequestResponse)
+def complete_movie_request_admin(
+    request_id: int,
+    db: Session = Depends(get_db),
+    current_admin: User = Depends(get_current_admin)
+):
+    """
+    Manually complete a movie request.
+    Only accessible by administrators.
+    """
+    db_request = db.query(MovieRequest).filter(MovieRequest.id == request_id).first()
+    if not db_request:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Request not found"
+        )
+    
+    db_request.status = "Completed"
+    db_request.completed_at = datetime.utcnow()
+    db.commit()
+    db.refresh(db_request)
+    
+    # Fill user_email for the response
+    user = db.query(User).filter(User.id == db_request.user_id).first()
+    db_request.user_email = user.email if user else "Unknown"
+    return db_request

@@ -10,6 +10,7 @@ import AdminLogin from './pages/AdminLogin';
 import AdminDashboard from './pages/AdminDashboard';
 import MyList from './pages/MyList';
 import Profile from './pages/Profile';
+import UserRequests from './pages/UserRequests';
 
 // Route Guards
 import ProtectedRoute from './components/ProtectedRoute';
@@ -102,6 +103,16 @@ function App() {
             <ProtectedRoute>
               <MainLayout>
                 <Profile />
+              </MainLayout>
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/requests" 
+          element={
+            <ProtectedRoute>
+              <MainLayout>
+                <UserRequests />
               </MainLayout>
             </ProtectedRoute>
           } 

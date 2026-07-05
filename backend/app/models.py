@@ -1,6 +1,7 @@
 import enum
 from datetime import datetime
-from sqlalchemy import Column, Integer, String, Float, Boolean, DateTime, Enum, Text
+from sqlalchemy import Column, Integer, String, Float, Boolean, DateTime, Enum, Text, ForeignKey
+from sqlalchemy.orm import relationship
 from .database import Base
 
 class UserRole(str, enum.Enum):
@@ -34,3 +35,20 @@ class Movie(Base):
     is_visible = Column(Boolean, default=True, nullable=False)
     created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
+
+class MovieRequest(Base):
+    __tablename__ = "movie_requests"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+    title = Column(String, index=True, nullable=False)
+    type = Column(String, default="movie", nullable=False) # e.g. movie, webseries
+    needed_by = Column(DateTime, nullable=False) # UTC needed date-time
+    timezone = Column(String, nullable=False) # 'IST' or 'AEST'
+    status = Column(String, default="Pending", nullable=False) # 'Pending' or 'Completed'
+    created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
+    completed_at = Column(DateTime, nullable=True)
+
+    # Relationships
+    user = relationship("User", backref="movie_requests")
+

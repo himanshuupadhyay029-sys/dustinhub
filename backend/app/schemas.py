@@ -121,3 +121,33 @@ class MovieResponse(MovieBase):
 
     class Config:
         from_attributes = True
+
+# Movie Request Schemas
+class MovieRequestCreate(BaseModel):
+    title: str = Field(..., min_length=1)
+    type: str = Field(default="movie", min_length=1)
+    needed_by: datetime
+    timezone: str = Field(..., min_length=1)
+
+    @field_validator('timezone')
+    @classmethod
+    def validate_timezone(cls, v: str) -> str:
+        if v not in ("IST", "AEST"):
+            raise ValueError("Timezone must be 'IST' or 'AEST'")
+        return v
+
+class MovieRequestResponse(BaseModel):
+    id: int
+    user_id: int
+    title: str
+    type: str
+    needed_by: datetime
+    timezone: str
+    status: str
+    created_at: datetime
+    completed_at: Optional[datetime] = None
+    user_email: Optional[str] = None
+
+    class Config:
+        from_attributes = True
+

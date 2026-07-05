@@ -2,8 +2,8 @@ from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.orm import Session
 from typing import List, Optional
 from ..database import get_db
-from ..models import Movie, User
-from ..schemas import MovieResponse
+from ..models import Movie, User, MovieRequest
+from ..schemas import MovieResponse, MovieRequestCreate, MovieRequestResponse
 from ..auth import get_current_user
 
 router = APIRouter(prefix="/api/movies", tags=["Movies"])
@@ -48,3 +48,43 @@ def get_movie_detail(
             detail="Movie not found or is hidden"
         )
     return movie
+
+@router.post("/requests", response_model=MovieRequestResponse, status_code=status.HTTP_201_CREATED)
+def create_movie_request(
+    request_in: MovieRequestCreate,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    """
+    Create a new movie or webseries request.
+    """
+    db_request = MovieRequest(
+        user_id=current_user.id,
+        title=request_in.title,
+        type=request_in.type,
+        needed_by=request_in.needed_by,
+        timezone=request_in.timezone,
+        status="Pending"
+    )
+    db.add(db_request)
+    db.commit()
+    db.refresh(db_request)
+    db_request.user_email = current_user.email
+    return db_request
+
+@router.get("/requests", response_model=List[MovieRequestResponse])
+def get_user_movie_requests(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    """
+    Retrieve request history for the logged-in user.
+    """
+    requests = db.query(MovieRequest).filter(
+        MovieRequest.user_id == current_user.id
+    ).order_by(MovieRequest.created_at.desc()).all()
+    
+    for r in requests:
+        r.user_email = current_user.email
+    return requests
+

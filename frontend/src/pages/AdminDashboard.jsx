@@ -4,7 +4,7 @@ import { useAuthStore } from '../store/useAuthStore';
 import client from '../api/client';
 import { 
   Plus, Edit2, Trash2, Eye, EyeOff, Search, Loader2, LogOut, ArrowLeft, 
-  ExternalLink, CheckCircle, RefreshCw, X 
+  ExternalLink, CheckCircle, RefreshCw, X, Tv, Film, Globe, MessageSquare, Clock, CheckCircle2
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 
@@ -24,6 +24,11 @@ const AdminDashboard = () => {
   const [users, setUsers] = useState([]);
   const [isUsersLoading, setIsUsersLoading] = useState(false);
   const [userSearchQuery, setUserSearchQuery] = useState('');
+
+  // Request Management State
+  const [requests, setRequests] = useState([]);
+  const [isRequestsLoading, setIsRequestsLoading] = useState(false);
+  const [requestSearchQuery, setRequestSearchQuery] = useState('');
 
   // Modal State
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -99,11 +104,75 @@ const AdminDashboard = () => {
     }
   };
 
+  const fetchRequests = async () => {
+    setIsRequestsLoading(true);
+    try {
+      const response = await client.get('/api/admin/requests');
+      setRequests(response.data);
+    } catch (err) {
+      console.error(err);
+      toast.error('Failed to fetch user requests');
+    } finally {
+      setIsRequestsLoading(false);
+    }
+  };
+
+  const handleCompleteRequest = async (requestId) => {
+    if (!window.confirm('Are you sure you want to mark this request as completed?')) {
+      return;
+    }
+    try {
+      await client.post(`/api/admin/requests/${requestId}/complete`);
+      toast.success('Request marked as completed successfully');
+      fetchRequests();
+    } catch (err) {
+      console.error(err);
+      toast.error(err.response?.data?.detail || 'Failed to complete request');
+    }
+  };
+
+  const handleOpenAddModalFromRequest = (req) => {
+    setEditingMovie(null);
+    setTitle(req.title);
+    setType(req.type || 'movie');
+    setGenre('');
+    setYear('2026');
+    setLanguage('');
+    setRating('7.0');
+    setSynopsis('No description available.');
+    setCast('N/A');
+    setPosterUrl('');
+    setDownloadLink('');
+    setIsVisible(true);
+    setIsModalOpen(true);
+  };
+
+  const formatInTimeZone = (dateStr, timeZone, label) => {
+    try {
+      const date = new Date(dateStr);
+      if (isNaN(date.getTime())) return 'N/A';
+      const formatter = new Intl.DateTimeFormat('en-US', {
+        day: '2-digit',
+        month: 'short',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: true,
+        timeZone: timeZone
+      });
+      return `${formatter.format(date)} (${label})`;
+    } catch (e) {
+      return 'N/A';
+    }
+  };
+
   useEffect(() => {
     if (activeTab === 'movies') {
       fetchMovies();
-    } else {
+    } else if (activeTab === 'users') {
       fetchUsers();
+    } else {
+      fetchRequests();
     }
   }, [activeTab]);
 
@@ -222,6 +291,7 @@ const AdminDashboard = () => {
         const response = await client.post('/api/admin/movies', payload);
         setMovies([response.data, ...movies]);
         toast.success('New movie added to catalog');
+        fetchRequests(); // Automatically sync requests since this movie might resolve a pending request
       }
       setIsModalOpen(false);
     } catch (err) {
@@ -250,6 +320,11 @@ const AdminDashboard = () => {
     user.role.toLowerCase().includes(userSearchQuery.toLowerCase())
   );
 
+  const filteredRequests = requests.filter(req => 
+    (req.title || '').toLowerCase().includes(requestSearchQuery.toLowerCase()) ||
+    (req.user_email || '').toLowerCase().includes(requestSearchQuery.toLowerCase())
+  );
+
   return (
     <div className="min-h-screen bg-cinema-black text-white pb-16">
       {/* Inline Dashboard Header inside MainLayout content flow */}
@@ -262,7 +337,7 @@ const AdminDashboard = () => {
         </div>
         <div className="flex items-center space-x-3">
           <button
-            onClick={activeTab === 'movies' ? fetchMovies : fetchUsers}
+            onClick={activeTab === 'movies' ? fetchMovies : activeTab === 'users' ? fetchUsers : fetchRequests}
             className="p-2.5 rounded bg-zinc-900 border border-zinc-800 text-zinc-400 hover:text-white transition-all duration-200"
             title="Refresh database list"
           >
@@ -292,6 +367,16 @@ const AdminDashboard = () => {
           }`}
         >
           Manage Registered Users
+        </button>
+        <button
+          onClick={() => setActiveTab('requests')}
+          className={`py-3.5 px-6 text-xs font-bold uppercase tracking-wider border-b-2 transition duration-200 ${
+            activeTab === 'requests'
+              ? 'border-cinema-red text-cinema-red'
+              : 'border-transparent text-zinc-500 hover:text-white'
+          }`}
+        >
+          Manage User Requests
         </button>
       </div>
 
@@ -447,7 +532,7 @@ const AdminDashboard = () => {
               )}
             </div>
           </>
-        ) : (
+        ) : activeTab === 'users' ? (
           <>
             <div className="flex flex-col md:flex-row justify-between items-stretch md:items-center gap-4">
               {/* User search bar */}
@@ -544,6 +629,131 @@ const AdminDashboard = () => {
                             >
                               <Trash2 className="w-4 h-4" />
                             </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </div>
+          </>
+        ) : (
+          <>
+            {/* Requests Panel */}
+            <div className="flex flex-col md:flex-row justify-between items-stretch md:items-center gap-4">
+              {/* Search bar */}
+              <div className="relative flex-1 max-w-md">
+                <input
+                  type="text"
+                  placeholder="Search requests by title or email..."
+                  value={requestSearchQuery}
+                  onChange={(e) => setRequestSearchQuery(e.target.value)}
+                  className="w-full bg-zinc-950 border border-zinc-800 rounded-lg pl-10 pr-4 py-2.5 text-sm text-white placeholder-zinc-500 focus:outline-none focus:ring-1 focus:ring-cinema-red focus:border-cinema-red"
+                />
+                <Search className="absolute left-3 top-3 text-zinc-500 w-4 h-4" />
+              </div>
+              <div className="text-zinc-500 text-sm font-bold uppercase tracking-wider">
+                Total Requests: <span className="text-white">{filteredRequests.length}</span>
+              </div>
+            </div>
+
+            {/* Requests Table */}
+            <div className="bg-zinc-950 border border-zinc-800 rounded-xl overflow-hidden">
+              {isRequestsLoading ? (
+                <div className="py-24 flex flex-col items-center justify-center space-y-4">
+                  <Loader2 className="w-10 h-10 text-red-500 animate-spin" />
+                  <p className="text-zinc-500 text-sm">Loading user requests...</p>
+                </div>
+              ) : filteredRequests.length === 0 ? (
+                <div className="py-24 text-center">
+                  <p className="text-zinc-400 font-bold text-lg">No requests found</p>
+                  <p className="text-zinc-600 text-sm mt-1">Try resetting your search query.</p>
+                </div>
+              ) : (
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left text-sm border-collapse">
+                    <thead>
+                      <tr className="border-b border-zinc-800 text-zinc-400 font-bold text-xs uppercase bg-zinc-900/50">
+                        <th className="py-4 px-6">User Email</th>
+                        <th className="py-4 px-6">Requested Title</th>
+                        <th className="py-4 px-6 text-center">Type</th>
+                        <th className="py-4 px-6">Target Needed Time (IST / AEST)</th>
+                        <th className="py-4 px-6 text-center">Status</th>
+                        <th className="py-4 px-6">Date Requested</th>
+                        <th className="py-4 px-6 text-right">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-zinc-900">
+                      {filteredRequests.map((req) => (
+                        <tr key={req.id} className="hover:bg-zinc-900/30 transition">
+                          {/* User Email */}
+                          <td className="py-4 px-6 font-semibold text-white">
+                            {req.user_email}
+                          </td>
+
+                          {/* Title */}
+                          <td className="py-4 px-6 font-bold text-white uppercase tracking-wide">
+                            {req.title}
+                          </td>
+
+                          {/* Type */}
+                          <td className="py-4 px-6 text-center">
+                            <span className="uppercase text-[9px] font-black tracking-wider text-red-500 border border-red-500/30 rounded px-1.5 py-0.5 bg-red-500/5">
+                              {req.type === 'webseries' ? 'Web Series' : 'Movie'}
+                            </span>
+                          </td>
+
+                          {/* Needed Time */}
+                          <td className="py-4 px-6">
+                            <div className="flex flex-col space-y-1">
+                              <span className={`text-xs ${req.timezone === 'IST' ? 'text-white font-extrabold' : 'text-zinc-400'}`}>
+                                {formatInTimeZone(req.needed_by, 'Asia/Kolkata', 'IST')}
+                              </span>
+                              <span className={`text-xs ${req.timezone === 'AEST' ? 'text-white font-extrabold' : 'text-zinc-400'}`}>
+                                {formatInTimeZone(req.needed_by, 'Australia/Sydney', 'AEST/AEDT')}
+                              </span>
+                            </div>
+                          </td>
+
+                          {/* Status */}
+                          <td className="py-4 px-6 text-center">
+                            <span className={`inline-flex items-center space-x-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold border transition ${
+                              req.status === 'Completed' 
+                                ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400 shadow-[0_0_8px_rgba(16,185,129,0.2)]' 
+                                : 'bg-amber-500/10 border-amber-500/20 text-amber-500'
+                            }`}>
+                              {req.status}
+                            </span>
+                          </td>
+
+                          {/* Date Requested */}
+                          <td className="py-4 px-6 text-zinc-500 text-xs">
+                            {new Date(req.created_at).toLocaleString()}
+                          </td>
+
+                          {/* Actions */}
+                          <td className="py-4 px-6 text-right space-x-2">
+                            {req.status === 'Pending' ? (
+                              <>
+                                <button
+                                  onClick={() => handleOpenAddModalFromRequest(req)}
+                                  className="px-3 py-1.5 rounded bg-cinema-red hover:bg-cinema-red/90 text-white font-black text-xs uppercase tracking-wider transition"
+                                  title="Open upload modal with this title pre-filled"
+                                >
+                                  Upload
+                                </button>
+                                <button
+                                  onClick={() => handleCompleteRequest(req.id)}
+                                  className="p-1.5 rounded bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-zinc-300 hover:text-white transition text-xs font-bold animate-in duration-200"
+                                  title="Mark completed directly"
+                                >
+                                  Complete
+                                </button>
+                              </>
+                            ) : (
+                              <span className="text-[10px] text-zinc-600 font-bold uppercase tracking-wider">Completed</span>
+                            )}
                           </td>
                         </tr>
                       ))}
