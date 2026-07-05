@@ -184,21 +184,84 @@ const MovieDetail = () => {
               </div>
             )}
 
-            {/* Action Buttons: Download & Watchlist */}
-            <div className="flex flex-wrap gap-4 pt-4">
-              <a
-                href={movie.download_link}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center space-x-3 bg-cinema-red hover:bg-cinema-red/90 text-white font-black text-lg py-4 px-8 rounded-xl shadow-lg hover:shadow-cinema-red/30 transition transform hover:-translate-y-0.5 cursor-pointer"
-              >
-                <Download className="w-5 h-5 stroke-[3px]" />
-                <span>Download Content</span>
-              </a>
+            {/* Dynamic Content Links: Web Series Episodes or Movie Mirrors */}
+            <div className="space-y-4 pt-4 border-t border-white/5">
+              <h2 className="text-lg font-black text-white tracking-wide uppercase">
+                {movie.type === 'webseries' ? 'Episodes & Seasons' : 'Stream & Download Servers'}
+              </h2>
+              
+              {movie.links && movie.links.length > 0 ? (
+                movie.type === 'webseries' ? (
+                  /* Web Series Episodes Stack layout */
+                  <div className="space-y-3 max-h-96 overflow-y-auto pr-2 border border-white/5 bg-zinc-950/40 p-4 rounded-xl no-scrollbar">
+                    {movie.links.map((link, idx) => (
+                      <div 
+                        key={idx} 
+                        className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-3.5 bg-zinc-900/30 border border-white/5 hover:border-cinema-red/35 hover:bg-zinc-900/60 rounded-xl transition duration-300 group gap-3 mb-2.5 last:mb-0"
+                      >
+                        <div className="flex items-center space-x-3.5 min-w-0">
+                          <div className="w-7 h-7 rounded-lg bg-cinema-red/10 border border-cinema-red/20 flex items-center justify-center text-cinema-red group-hover:scale-105 transition-transform flex-shrink-0">
+                            <span className="text-[10px] font-black">{idx + 1}</span>
+                          </div>
+                          <span className="font-extrabold text-sm text-zinc-200 group-hover:text-white truncate">
+                            {link.name}
+                          </span>
+                        </div>
 
+                        <a
+                          href={link.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center justify-center space-x-2 px-4.5 py-2 rounded-lg bg-zinc-900 hover:bg-cinema-red border border-zinc-800 hover:border-cinema-red text-white text-xs font-black uppercase transition-all duration-300 flex-shrink-0"
+                        >
+                          <Download className="w-3.5 h-3.5" />
+                          <span>Stream / Download</span>
+                        </a>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  /* Movie Mirror Pills/Grid Layout */
+                  <div className="flex flex-wrap gap-4">
+                    {movie.links.map((link, idx) => (
+                      <a
+                        key={idx}
+                        href={link.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center space-x-3 bg-cinema-red/10 hover:bg-cinema-red border border-cinema-red/30 hover:border-cinema-red text-cinema-red hover:text-white font-black text-xs md:text-sm py-3 px-6 rounded-xl transition-all duration-300 transform hover:-translate-y-0.5 cursor-pointer shadow-lg shadow-cinema-red/5 hover:shadow-cinema-red/25"
+                      >
+                        <Download className="w-4 h-4" />
+                        <span>{link.name}</span>
+                      </a>
+                    ))}
+                  </div>
+                )
+              ) : (
+                /* Fallback for legacy uploads that have only a single download_link string */
+                <div className="flex flex-wrap gap-4">
+                  {movie.download_link && movie.download_link !== 'N/A' ? (
+                    <a
+                      href={movie.download_link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center space-x-3 bg-cinema-red hover:bg-cinema-red/90 text-white font-black text-xs md:text-sm py-3.5 px-7 rounded-xl shadow-lg hover:shadow-cinema-red/30 transition transform hover:-translate-y-0.5 cursor-pointer"
+                    >
+                      <Download className="w-4 h-4 stroke-[3px]" />
+                      <span>Download Content (Mirror 1)</span>
+                    </a>
+                  ) : (
+                    <p className="text-xs text-zinc-500 font-extrabold uppercase italic">No download/streaming links available yet.</p>
+                  )}
+                </div>
+              )}
+            </div>
+
+            {/* Action Buttons: Watchlist & Note */}
+            <div className="flex flex-wrap items-center gap-4 pt-4">
               <button
                 onClick={toggleWatchlist}
-                className={`inline-flex items-center space-x-2 px-6 py-4 rounded-xl font-black text-lg transition transform hover:-translate-y-0.5 border ${
+                className={`inline-flex items-center space-x-2 px-6 py-3.5 rounded-xl font-black text-sm transition transform hover:-translate-y-0.5 border ${
                   isInWatchlist
                     ? 'bg-zinc-900 border-cinema-red/30 text-cinema-red shadow-[0_0_15px_rgba(229,9,20,0.1)] hover:bg-zinc-800'
                     : 'bg-white/5 border-white/10 text-white hover:bg-white/10'
@@ -206,20 +269,21 @@ const MovieDetail = () => {
               >
                 {isInWatchlist ? (
                   <>
-                    <Check className="w-5 h-5 stroke-[3px]" />
+                    <Check className="w-4 h-4 stroke-[3px]" />
                     <span>In My List</span>
                   </>
                 ) : (
                   <>
-                    <Plus className="w-5 h-5 stroke-[3px]" />
+                    <Plus className="w-4 h-4 stroke-[3px]" />
                     <span>Add to List</span>
                   </>
                 )}
               </button>
+              
+              <p className="text-xs text-cinema-textGray pl-1">
+                Note: External download hosts (Drive, Mega, etc.) are third-party services.
+              </p>
             </div>
-            <p className="text-xs text-cinema-textGray mt-2 pl-1">
-              Note: This links to an external host (Drive, Mega, etc.). Make sure you have a safe connection.
-            </p>
           </div>
         </div>
       </div>

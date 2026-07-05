@@ -8,6 +8,7 @@ from ..models import Movie, User, UserRole, MovieRequest
 from ..schemas import MovieCreate, MovieUpdate, MovieResponse, UserLogin, Token, UserResponse, MovieRequestResponse
 from ..auth import get_current_admin, verify_password, create_access_token
 from datetime import datetime
+import json
 
 router = APIRouter(prefix="/api/admin", tags=["Admin Actions"])
 
@@ -66,7 +67,11 @@ def add_movie(
     Create a new movie entry.
     Only accessible by administrators.
     """
-    db_movie = Movie(**movie_in.model_dump())
+    movie_data = movie_in.model_dump()
+    if "links" in movie_data and movie_data["links"] is not None:
+        movie_data["links"] = json.dumps(movie_data["links"])
+        
+    db_movie = Movie(**movie_data)
     db.add(db_movie)
     db.commit()
     db.refresh(db_movie)
@@ -106,6 +111,9 @@ def update_movie(
         )
     
     update_data = movie_in.model_dump(exclude_unset=True)
+    if "links" in update_data and update_data["links"] is not None:
+        update_data["links"] = json.dumps(update_data["links"])
+        
     for field, value in update_data.items():
         setattr(db_movie, field, value)
         

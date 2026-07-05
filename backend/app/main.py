@@ -82,6 +82,17 @@ try:
                     "ALTER TABLE movies ADD COLUMN type VARCHAR NOT NULL DEFAULT 'movie'"
                 ))
             print("Migration applied: Added 'type' column to movies table.")
+        
+        # Migration: Add 'links' column if it doesn't exist
+        if "links" not in existing_columns:
+            with engine.begin() as conn:
+                conn.execute(text(
+                    "ALTER TABLE movies ADD COLUMN links TEXT"
+                ))
+                conn.execute(text(
+                    "UPDATE movies SET links = '[{\"name\": \"Download/Stream\", \"url\": \"' || download_link || '\"}]' WHERE links IS NULL"
+                ))
+            print("Migration applied: Added 'links' column to movies table and backfilled existing data.")
         else:
             print("Movies Schema is up-to-date. No migrations needed.")
     else:

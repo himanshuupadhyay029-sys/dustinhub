@@ -1,5 +1,6 @@
 from datetime import datetime
-from typing import Optional
+from typing import Optional, List, Any
+import json
 from urllib.parse import urlparse
 from pydantic import BaseModel, EmailStr, Field, field_validator
 from .models import UserRole
@@ -33,6 +34,20 @@ class TokenData(BaseModel):
     role: Optional[UserRole] = None
 
 # Movie Schemas
+class EpisodeLink(BaseModel):
+    name: str = Field(..., min_length=1)
+    url: str = Field(..., min_length=1)
+
+    @field_validator('url')
+    @classmethod
+    def validate_url_field(cls, v: str) -> str:
+        parsed = urlparse(v)
+        if not parsed.scheme or parsed.scheme not in ("http", "https"):
+            raise ValueError("URL must start with http or https")
+        if not parsed.netloc:
+            raise ValueError("URL must contain a valid domain/host")
+        return v
+
 class MovieBase(BaseModel):
     title: str = Field(..., min_length=1)
     type: str = Field(default="movie", min_length=1)
@@ -43,7 +58,8 @@ class MovieBase(BaseModel):
     cast: str = Field(default="N/A")
     rating: float = Field(default=7.0, ge=0.0, le=10.0)
     poster_url: str
-    download_link: str
+    download_link: str = "N/A"
+    links: Optional[List[EpisodeLink]] = None
     is_visible: bool = True
 
     @field_validator('type', mode='before')
@@ -79,6 +95,8 @@ class MovieBase(BaseModel):
     @field_validator('poster_url', 'download_link')
     @classmethod
     def validate_urls(cls, v: str) -> str:
+        if v == "N/A":
+            return v
         parsed = urlparse(v)
         if not parsed.scheme or parsed.scheme not in ("http", "https"):
             raise ValueError("URL must start with http or https")
@@ -100,12 +118,13 @@ class MovieUpdate(BaseModel):
     rating: Optional[float] = None
     poster_url: Optional[str] = None
     download_link: Optional[str] = None
+    links: Optional[List[EpisodeLink]] = None
     is_visible: Optional[bool] = None
 
     @field_validator('poster_url', 'download_link')
     @classmethod
     def validate_urls(cls, v: Optional[str]) -> Optional[str]:
-        if v is None:
+        if v is None or v == "N/A":
             return v
         parsed = urlparse(v)
         if not parsed.scheme or parsed.scheme not in ("http", "https"):
@@ -121,6 +140,16 @@ class MovieResponse(MovieBase):
 
     class Config:
         from_attributes = True
+
+    @field_validator('links', mode='before')
+    @classmethod
+    def parse_links_json(cls, v: Any) -> Any:
+        if isinstance(v, str):
+            try:
+                return json.loads(v)
+            except Exception:
+                return []
+        return v
 
 # Movie Request Schemas
 class MovieRequestCreate(BaseModel):

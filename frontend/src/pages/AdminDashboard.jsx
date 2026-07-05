@@ -44,7 +44,7 @@ const AdminDashboard = () => {
   const [synopsis, setSynopsis] = useState('');
   const [cast, setCast] = useState('');
   const [posterUrl, setPosterUrl] = useState('');
-  const [downloadLink, setDownloadLink] = useState('');
+  const [links, setLinks] = useState([{ name: 'Download/Stream', url: '' }]);
   const [isVisible, setIsVisible] = useState(true);
 
   const fetchMovies = async () => {
@@ -142,7 +142,7 @@ const AdminDashboard = () => {
     setSynopsis('No description available.');
     setCast('N/A');
     setPosterUrl('');
-    setDownloadLink('');
+    setLinks([{ name: req.type === 'webseries' ? 'Episode 1' : 'Download/Stream', url: '' }]);
     setIsVisible(true);
     setIsModalOpen(true);
   };
@@ -194,7 +194,7 @@ const AdminDashboard = () => {
     setSynopsis('No description available.');
     setCast('N/A');
     setPosterUrl('');
-    setDownloadLink('');
+    setLinks([{ name: 'Download/Stream', url: '' }]);
     setIsVisible(true);
     setIsModalOpen(true);
   };
@@ -210,7 +210,11 @@ const AdminDashboard = () => {
     setSynopsis(movie.synopsis || 'No description available.');
     setCast(movie.cast || 'N/A');
     setPosterUrl(movie.poster_url);
-    setDownloadLink(movie.download_link);
+    setLinks(
+      movie.links && movie.links.length > 0 
+        ? movie.links 
+        : [{ name: 'Download/Stream', url: movie.download_link || '' }]
+    );
     setIsVisible(movie.is_visible);
     setIsModalOpen(true);
   };
@@ -247,8 +251,13 @@ const AdminDashboard = () => {
     e.preventDefault();
 
     // Basic Validations - only check fields that are in the form
-    if (!title || !type || !genre || !language || !posterUrl || !downloadLink) {
-      toast.error('All fields are required');
+    if (!title || !type || !genre || !language || !posterUrl) {
+      toast.error('All standard fields are required');
+      return;
+    }
+
+    if (links.some(l => !l.name.trim() || !l.url.trim())) {
+      toast.error('All mirror links / episode names and URLs are required');
       return;
     }
 
@@ -267,8 +276,8 @@ const AdminDashboard = () => {
       return;
     }
 
-    if (!isValidUrl(downloadLink)) {
-      toast.error('Download Link must be a valid URL starting with http:// or https://');
+    if (links.some(l => !isValidUrl(l.url))) {
+      toast.error('All mirror / episode links must be valid URLs starting with http:// or https://');
       return;
     }
 
@@ -282,7 +291,8 @@ const AdminDashboard = () => {
       synopsis: synopsis || 'No description available.',
       cast: cast || 'N/A',
       poster_url: posterUrl,
-      download_link: downloadLink,
+      download_link: 'N/A', // Set default fallback for schema compatibility
+      links: links.map(l => ({ name: l.name.trim(), url: l.url.trim() })),
       is_visible: isVisible
     };
 
@@ -435,7 +445,7 @@ const AdminDashboard = () => {
                         <th className="py-4 px-6">Genre</th>
                         <th className="py-4 px-6 text-center">Rating</th>
                         <th className="py-4 px-6 text-center">Visibility</th>
-                        <th className="py-4 px-6">Download Link</th>
+                        <th className="py-4 px-6">Stream / Mirror Links</th>
                         <th className="py-4 px-6">Updated At</th>
                         <th className="py-4 px-6 text-right">Actions</th>
                       </tr>
@@ -496,17 +506,11 @@ const AdminDashboard = () => {
                             </button>
                           </td>
 
-                          {/* Download Link */}
-                          <td className="py-4 px-6 max-w-[200px] truncate text-zinc-400">
-                            <a 
-                              href={movie.download_link} 
-                              target="_blank" 
-                              rel="noopener noreferrer"
-                              className="hover:text-red-500 inline-flex items-center space-x-1 hover:underline"
-                            >
-                              <span className="truncate">{movie.download_link}</span>
-                              <ExternalLink className="w-3 h-3 flex-shrink-0" />
-                            </a>
+                          {/* Stream / Mirror Links Count */}
+                          <td className="py-4 px-6 text-zinc-400">
+                            <span className="font-semibold text-white bg-zinc-900 border border-zinc-800 px-2 py-1 rounded text-xs">
+                              {movie.links && movie.links.length > 0 ? `${movie.links.length} Links / Ep` : '1 Link'}
+                            </span>
                           </td>
 
                           {/* Updated Date */}
@@ -874,17 +878,69 @@ const AdminDashboard = () => {
                 />
               </div>
 
-              {/* Download URL */}
-              <div className="space-y-1">
-                <label className="text-xs font-black uppercase text-zinc-400">External Download Link (valid http/https link)</label>
-                <input
-                  type="url"
-                  required
-                  value={downloadLink}
-                  onChange={(e) => setDownloadLink(e.target.value)}
-                  placeholder="https://drive.google.com/... or https://mega.nz/..."
-                  className="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-red-600 focus:border-transparent text-white"
-                />
+              {/* Dynamic Episodes / Mirror Links Editor */}
+              <div className="space-y-3 bg-zinc-900/40 p-4 rounded-xl border border-zinc-850">
+                <div className="flex items-center justify-between">
+                  <label className="text-xs font-black uppercase text-zinc-400">
+                    {type === 'webseries' ? 'Episodes / Seasons Links' : 'Stream / Download Mirrors'}
+                  </label>
+                  <button
+                    type="button"
+                    onClick={() => setLinks([...links, { name: type === 'webseries' ? `Episode ${links.length + 1}` : `Server ${links.length + 1}`, url: '' }])}
+                    className="flex items-center space-x-1 px-3 py-1.5 rounded bg-zinc-850 hover:bg-zinc-800 text-[10px] font-black uppercase text-white transition border border-zinc-800"
+                  >
+                    <span>+ Add Link / Episode</span>
+                  </button>
+                </div>
+
+                <div className="space-y-2.5 max-h-56 overflow-y-auto pr-1">
+                  {links.map((link, index) => (
+                    <div key={index} className="flex items-center space-x-2 animate-in fade-in duration-200">
+                      {/* Name/Label */}
+                      <input
+                        type="text"
+                        required
+                        value={link.name}
+                        onChange={(e) => {
+                          const updated = [...links];
+                          updated[index].name = e.target.value;
+                          setLinks(updated);
+                        }}
+                        placeholder={type === 'webseries' ? 'e.g. Episode 1' : 'e.g. Server 1'}
+                        className="w-1/3 bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-xs focus:outline-none focus:ring-1 focus:ring-red-600 focus:border-transparent text-white"
+                      />
+
+                      {/* URL */}
+                      <input
+                        type="url"
+                        required
+                        value={link.url}
+                        onChange={(e) => {
+                          const updated = [...links];
+                          updated[index].url = e.target.value;
+                          setLinks(updated);
+                        }}
+                        placeholder="https://drive.google.com/... or https://..."
+                        className="flex-1 bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-xs focus:outline-none focus:ring-1 focus:ring-red-600 focus:border-transparent text-white"
+                      />
+
+                      {/* Delete button */}
+                      {links.length > 1 && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const updated = links.filter((_, i) => i !== index);
+                            setLinks(updated);
+                          }}
+                          className="p-2 rounded hover:bg-red-500/10 text-red-500 hover:text-red-400 transition"
+                          title="Remove link"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      )}
+                    </div>
+                  ))}
+                </div>
               </div>
 
 

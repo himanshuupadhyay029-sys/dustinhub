@@ -32,6 +32,7 @@ class Movie(Base):
     rating = Column(Float, nullable=False)
     poster_url = Column(String, nullable=False)
     download_link = Column(String, nullable=False)
+    links = Column(Text, nullable=True) # JSON array of name and url mirror links
     is_visible = Column(Boolean, default=True, nullable=False)
     created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
